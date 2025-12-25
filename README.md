@@ -1,4 +1,4 @@
-# CerberusWareV3
+# Cerberus Ware V3
 
 **EN:** Source Code of Cerberus Ware V3 - Cheat for space station 14  
 **RU:** Исходный код Cerberus Ware V3 - Чит для space station 14
