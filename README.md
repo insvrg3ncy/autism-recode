@@ -1,7 +1,7 @@
 # CerberusWareV3
 
-**EN:** Source Code of CerberusWareV3 - Cheat for space station 14  
-**RU:** Исходный код CerberusWareV3 - Чит для space station 14
+**EN:** Source Code of Cerberus Ware V3 - Cheat for space station 14  
+**RU:** Исходный код Cerberus Ware V3 - Чит для space station 14
 
 ![.NET](https://img.shields.io/badge/.NET-9.0-512BD4?style=for-the-badge&logo=dotnet&logoColor=white)
 ![Platform](https://img.shields.io/badge/Platform-Windows%20%7C%20Linux-0078D6?style=for-the-badge&logo=windows&logoColor=white)
