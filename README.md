@@ -1,7 +1,7 @@
-# CerberusWareV3
+# Cerberus Ware V3
 
-**EN:** Source Code of CerberusWareV3 - Cheat for space station 14  
-**RU:** Исходный код CerberusWareV3 - Читы для space station 14
+**EN:** Source Code of Cerberus Ware V3 - Cheat for space station 14  
+**RU:** Исходный код Cerberus Ware V3 - Чит для space station 14
 
 ![.NET](https://img.shields.io/badge/.NET-9.0-512BD4?style=for-the-badge&logo=dotnet&logoColor=white)
 ![Platform](https://img.shields.io/badge/Platform-Windows%20%7C%20Linux-0078D6?style=for-the-badge&logo=windows&logoColor=white)
@@ -22,7 +22,7 @@
 ### 📝 Author's Description
 
 > ✍️ **[Your description goes here]**  
-> This section is reserved for your personal introduction, project goals, features overview, or any other information you'd like to share about CerberusWareV3.
+> If you can't compile it, I'll be disappointed in you
 
 ---
 
@@ -40,7 +40,7 @@ Before you begin, ensure you have the following installed:
 Clone the repository to your local machine:
 
 ```bash
-git clone https://github.com/yourusername/CerberusWareV3.git
+git clone https://github.com/DobriyKaban/CerberusWareV3.git
 cd CerberusWareV3
 ```
 
@@ -63,7 +63,7 @@ dotnet build
 ```
 
 3. **Output location:**  
-   The compiled binaries will be located in `bin/Release/net9.0/`
+   The compiled binaries will be located in `bin/net9.0`
 
 ---
 
@@ -91,7 +91,7 @@ This project is licensed under the MIT License.
 ### 📝 Описание от автора
 
 > ✍️ **[Здесь будет ваше описание]**  
-> Этот раздел зарезервирован для вашего личного представления проекта, описания целей, обзора функций или любой другой информации, которой вы хотите поделиться о CerberusWareV3.
+> Если вы не осилите скомпилить то я разочаруюсь в вас
 
 ---
 
@@ -109,7 +109,7 @@ This project is licensed under the MIT License.
 Клонируйте репозиторий на свой компьютер:
 
 ```bash
-git clone https://github.com/yourusername/CerberusWareV3.git
+git clone https://github.com/DobriyKaban/CerberusWareV3.git
 cd CerberusWareV3
 ```
 
