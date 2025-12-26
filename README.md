@@ -18,3 +18,4 @@ Zкачай [MarZey](https://github.com/mixed-soup/MarZey.git) (купи имп�
     ```
 4. Скопируй эту хуйню в марсей, ну разберёшься короче бля
 
+CreditZ: @DobriyKaban (source code), @superlowfpss (prosto daun)
