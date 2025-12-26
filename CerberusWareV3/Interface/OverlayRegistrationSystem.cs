@@ -16,7 +16,7 @@ public sealed class OverlayRegistrationSystem : EntitySystem
 		this._overlayManager.AddOverlay(this._meleeAimbot);
 		this._overlayManager.AddOverlay(this._esp);
 		this._overlayManager.AddOverlay(this._stamina);
-		this._overlayManager.AddOverlay(this._fun);
+		//this._overlayManager.AddOverlay(this._fun);
 		this._overlayManager.AddOverlay(this._texture);
 		this._overlayManager.AddOverlay(this._storageViewer);
 		this._overlayManager.AddOverlay(this._itemSearch);
@@ -31,7 +31,7 @@ public sealed class OverlayRegistrationSystem : EntitySystem
 		this._overlayManager.RemoveOverlay(this._meleeAimbot);
 		this._overlayManager.RemoveOverlay(this._esp);
 		this._overlayManager.RemoveOverlay(this._stamina);
-		this._overlayManager.RemoveOverlay(this._fun);
+		//this._overlayManager.RemoveOverlay(this._fun);
 		this._overlayManager.RemoveOverlay(this._texture);
 		this._overlayManager.RemoveOverlay(this._storageViewer);
 		this._overlayManager.RemoveOverlay(this._itemSearch);
@@ -47,7 +47,7 @@ public sealed class OverlayRegistrationSystem : EntitySystem
 	 private readonly MeleeAimbotOverlay _meleeAimbot = new MeleeAimbotOverlay();
 	 private readonly EspOverlay _esp = new EspOverlay();
 	 private readonly StaminaOverlay _stamina = new StaminaOverlay();
-	 private readonly FunOverlay _fun = new FunOverlay();
+	 //private readonly FunOverlay _fun = new FunOverlay();
  private readonly TextureOverlay _texture = new TextureOverlay();
 private readonly StorageViewerOverlay _storageViewer = new StorageViewerOverlay();
 private readonly ItemSearchOverlay _itemSearch = new ItemSearchOverlay();

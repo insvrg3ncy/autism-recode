@@ -53,8 +53,8 @@ public class FunOverlay : Overlay
 				{
 					for (int i = 1; i < item.Count; i++)
 					{
-						Color color = (CerberusConfig.Fun.RainbowEnabled ? Color.FromHsv(new Vector4((this._rainbowHue + (float)i * 360f / 30f) % 360f / 360f, 1f, 1f, 1f)) : new Color(ref CerberusConfig.Fun.Color));
-						args.WorldHandle.DrawLine(item[i - 1], item[i], color);
+						//Color color = (CerberusConfig.Fun.RainbowEnabled ? Color.FromHsv(new Vector4((this._rainbowHue + (float)i * 360f / 30f) % 360f / 360f, 1f, 1f, 1f)) : new Color(ref CerberusConfig.Fun.Color));
+						//args.WorldHandle.DrawLine(item[i - 1], item[i], color);
 					}
 				}
 			}
@@ -158,7 +158,7 @@ public class FunOverlay : Overlay
 							{
 								this._rainbowHue += CerberusConfig.Fun.RainbowSpeed * args.DeltaSeconds * 360f;
 								this._rainbowHue %= 360f;
-								spriteComponent2.Color = Color.FromHsv(new Vector4(this._rainbowHue / 360f, 1f, 1f, 1f));
+								//spriteComponent2.Color = Color.FromHsv(new Vector4(this._rainbowHue / 360f, 1f, 1f, 1f));
 							}
 							else
 							{
