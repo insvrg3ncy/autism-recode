@@ -2,11 +2,19 @@
 
 Zкачай [MarZey](https://github.com/mixed-soup/MarZey.git) (купи империал пасс)
 
-1. ZклонироVать репо:
-`git clone https://github.com/insvrg3ncy/autism-recode.git`
-2. АтакоVать репоZиторий:
-`cd autism-recode.git`
-3. Zбилдить хуету:
-- 1. `dotnet restore`
-- 2. `dotnet build`
-4. Перекинуть Zалупень в марZей
+## Щтиобы скочатб етот прекрасни чит тебе надо:
+
+1. ZклонироVать репозиторий:
+    ```bash
+    git clone https://github.com/insvrg3ncy/autism-recode.git
+    ```
+2. Атаковать репоZиторий:
+    ```bash
+    cd autism-recode
+    ```
+3. Сбилдить проект:
+    ```bash
+    dotnet restore && dotnet build
+    ```
+4. Скопируй эту хуйню в марсей, ну разберёшься короче бля
+
