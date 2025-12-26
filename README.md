@@ -63,7 +63,7 @@ dotnet build
 ```
 
 3. **Output location:**  
-   The compiled binaries will be located in `bin/net9.0`
+   The compiled binaries will be located in `bin/Debug/net9.0`
 
 ---
 
@@ -132,7 +132,7 @@ dotnet build
 ```
 
 3. **Расположение файлов:**  
-   Скомпилированные файлы будут находиться в `bin/Release/net9.0/`
+   Скомпилированные файлы будут находиться в `bin/Debug/net9.0/`
 
 ---
 
