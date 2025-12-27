@@ -247,7 +247,7 @@ public sealed class MainMenuWindow : DefaultWindow
         logoPanel.PanelOverride = new StyleBoxFlat { BackgroundColor = new Color(57, 42, 100) };
         var logoLabel = new Label
         {
-            Text = "t.me/RobusterHome",
+            Text = "discord.gg/G7w9mrGhMh",
             HorizontalAlignment = HAlignment.Center,
             VerticalAlignment = VAlignment.Center,
             FontColorOverride = Color.White

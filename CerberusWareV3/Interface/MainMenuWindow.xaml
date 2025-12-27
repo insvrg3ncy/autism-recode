@@ -28,7 +28,7 @@
                         <PanelContainer.PanelOverride>
                             <gfx:StyleBoxFlat BackgroundColor="#392A64"/>
                         </PanelContainer.PanelOverride>
-                        <Label Text="t.me/RobusterHome" 
+                        <Label Text="discord.gg/G7w9mrGhMh" 
                                HorizontalAlignment="Center" 
                                VerticalAlignment="Center"
                                FontColorOverride="#FFFFFF"/>
