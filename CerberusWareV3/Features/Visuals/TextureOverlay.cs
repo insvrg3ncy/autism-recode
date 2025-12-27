@@ -4,6 +4,7 @@ using System.IO;
 using System.Numerics;
 using System.Runtime.CompilerServices;
 using CerberusWareV3.Configuration;
+using CerberusWareV3.Utilites;
 using Content.Shared.Mobs.Components;
 using Robust.Client.GameObjects;
 using Robust.Client.Graphics;
@@ -30,8 +31,8 @@ public class TextureOverlay : Overlay
 	}
 	private void LoadTextureFromAppData()
 	{
-		string folderPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
-		string text = Path.Combine(folderPath, "CerberusWare", "image.png");
+		string folderPath = PathHelper.GetAppDataDirectory();
+		string text = Path.Combine(folderPath, "image.png");
 		bool flag = File.Exists(text);
 		if (flag)
 		{

@@ -7,6 +7,7 @@ using System.Numerics;
 using CerberusWareV3.Configuration;
 using CerberusWareV3.Interface.Controls;
 using CerberusWareV3.Localization;
+using CerberusWareV3.Utilites;
 using Robust.Shared.GameObjects;
 using Robust.Client.Graphics;
 using Robust.Client.Timing;
@@ -1769,8 +1770,7 @@ public sealed class MainMenuWindow : DefaultWindow
         };
         openFolderButton.OnPressed += _ =>
         {
-            var configPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "CerberusWare");
-            Process.Start("explorer", configPath);
+            PathHelper.OpenFolderInExplorer(PathHelper.GetAppDataDirectory());
         };
         container.AddChild(openFolderButton);
 
@@ -2086,7 +2086,7 @@ public sealed class MainMenuWindow : DefaultWindow
         {
             if (!Directory.Exists(ConfigManager.configDir))
                 Directory.CreateDirectory(ConfigManager.configDir);
-            Process.Start("explorer", ConfigManager.configDir);
+            PathHelper.OpenFolderInExplorer(ConfigManager.configDir);
         };
         container.AddChild(buttonContainer);
         container.AddChild(openFolderButton);
@@ -2475,8 +2475,7 @@ public sealed class MainMenuWindow : DefaultWindow
         };
         openFolderButton.OnPressed += _ =>
         {
-            var configPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "CerberusWare");
-            Process.Start("explorer", configPath);
+            PathHelper.OpenFolderInExplorer(PathHelper.GetAppDataDirectory());
         };
         container.AddChild(openFolderButton);
 

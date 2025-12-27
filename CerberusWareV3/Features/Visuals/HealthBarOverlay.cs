@@ -1,15 +1,9 @@
 ﻿using System;
-using System.Linq;
 using System.Numerics;
 using System.Reflection;
-using System.Runtime.CompilerServices;
-using System.Collections;
-using System.Collections.Generic;
 using CerberusWareV3.Configuration;
 using Content.Client.StatusIcon;
 using Content.Client.UserInterface.Systems;
-using Content.Shared.Damage;
-using Content.Shared.Damage.Components;
 using Content.Shared.Mobs;
 using Content.Shared.Mobs.Components;
 using Content.Shared.Mobs.Systems;
@@ -48,93 +42,78 @@ public class HealthBarOverlay : Overlay
 
     protected override void Draw(in OverlayDrawArgs args)
     {
-        try
+        if (!CerberusConfig.Hud.ShowHealth)
+            return;
+
+        DrawingHandleWorld worldHandle = args.WorldHandle;
+        IEye eye = args.Viewport.Eye;
+        Angle angle = (eye != null) ? eye.Rotation : Angle.Zero;
+
+        EntityQuery<TransformComponent> entityQuery = this._entityManager.GetEntityQuery<TransformComponent>();
+        Vector2 scale = new Vector2(1f, 1f);
+        Matrix3x2 scaleMatrix = Matrix3Helpers.CreateScale(ref scale);
+        Matrix3x2 rotationMatrix = Matrix3Helpers.CreateRotation(-angle);
+
+        // Ищем все сущности с нужными компонентами (как StorageViewer)
+        var query = this._entityManager.AllEntityQueryEnumerator<MobThresholdsComponent, MobStateComponent, SpriteComponent>();
+        
+        while (query.MoveNext(out EntityUid entityUid, out var mobThresholdsComponent, out var mobStateComponent, out var spriteComponent))
         {
-            if (!CerberusConfig.Hud.ShowHealth)
-                return;
+            if (!entityQuery.TryGetComponent(entityUid, out var transformComponent) || transformComponent.MapID != args.MapId)
+                continue;
 
-            DrawingHandleWorld worldHandle = args.WorldHandle;
-            IEye eye = args.Viewport.Eye;
-            Angle angle = (eye != null) ? eye.Rotation : Angle.Zero;
+            // Пытаемся получить DamageableComponent через рефлексию (безопасно)
+            Type damageableType = Type.GetType("Content.Shared.Damage.Components.DamageableComponent, Content.Shared");
+            if (damageableType == null)
+                continue;
 
-            EntityQuery<TransformComponent> entityQuery = this._entityManager.GetEntityQuery<TransformComponent>();
-            Vector2 scale = new Vector2(1f, 1f);
-            Matrix3x2 scaleMatrix = Matrix3Helpers.CreateScale(ref scale);
-            Matrix3x2 rotationMatrix = Matrix3Helpers.CreateRotation(-angle);
+            if (!this._entityManager.TryGetComponent(entityUid, damageableType, out var damageableComponentObj))
+                continue;
 
-            var query = this._entityManager.AllEntityQueryEnumerator<MobThresholdsComponent, MobStateComponent, DamageableComponent, SpriteComponent>();
+            StatusIconComponent statusIconComponent = EntityManagerExt.GetComponentOrNull<StatusIconComponent>(this._entityManager, entityUid);
+            Box2 box = (statusIconComponent?.Bounds) ?? spriteComponent.Bounds;
 
-            while (query.MoveNext(out EntityUid entityUid, out var mobThresholdsComponent, out var mobStateComponent, out var damageableComponent, out var spriteComponent))
+            var progressInfo = this.CalcProgress(entityUid, mobStateComponent, damageableComponentObj, mobThresholdsComponent);
+
+            if (progressInfo != null)
             {
-                if (!entityQuery.TryGetComponent(entityUid, out var transformComponent) || transformComponent.MapID != args.MapId)
-                    continue;
+                var (ratio, inCrit) = progressInfo.Value;
 
-                if (damageableComponent.DamageContainerID == null)
-                    continue;
+                Vector2 worldPos = this._transformSystem.GetWorldPosition(transformComponent);
+                Matrix3x2 translationMatrix = Matrix3Helpers.CreateTranslation(worldPos);
+                Matrix3x2 transformMatrix = Matrix3x2.Multiply(scaleMatrix, translationMatrix);
+                transformMatrix = Matrix3x2.Multiply(rotationMatrix, transformMatrix);
 
-                // Пропускаем мертвых, если нужно (опционально)
-                // if (mobStateComponent.CurrentState == MobState.Dead) continue;
+                worldHandle.SetTransform(ref transformMatrix);
 
-                StatusIconComponent statusIconComponent = EntityManagerExt.GetComponentOrNull<StatusIconComponent>(this._entityManager, entityUid);
-                Box2 box = (statusIconComponent?.Bounds) ?? spriteComponent.Bounds;
+                float height = box.Height * 32f / 2f - 3f;
+                float width = box.Width * 32f;
+                Vector2 baseOffset = new Vector2(-width / 32f / 2f, height / 32f);
 
-                var progressInfo = this.CalcProgress(entityUid, mobStateComponent, damageableComponent, mobThresholdsComponent);
+                Color progressColor = this.GetProgressColor(ratio, inCrit);
 
-                if (progressInfo != null)
-                {
-                    var (ratio, inCrit) = progressInfo.Value;
-
-                    Vector2 worldPos = this._transformSystem.GetWorldPosition(transformComponent);
-                    Matrix3x2 translationMatrix = Matrix3Helpers.CreateTranslation(worldPos);
-                    Matrix3x2 transformMatrix = Matrix3x2.Multiply(scaleMatrix, translationMatrix);
-                    transformMatrix = Matrix3x2.Multiply(rotationMatrix, transformMatrix);
-
-                    worldHandle.SetTransform(ref transformMatrix);
-
-                    float height = box.Height * 32f / 2f - 3f;
-                    float width = box.Width * 32f;
-                    Vector2 baseOffset = new Vector2(-width / 32f / 2f, height / 32f);
-
-                    Color progressColor = this.GetProgressColor(ratio, inCrit);
-
-                    float barWidth = width - 8f;
-                    float filledWidth = barWidth * ratio + 8f;
-                    
-                    Box2 bgBox = new Box2(new Vector2(8f, 0f) / 32f, new Vector2(barWidth + 8f, 3f) / 32f);
-                    bgBox = bgBox.Translated(baseOffset);
-                    worldHandle.DrawRect(bgBox, Color.Black.WithAlpha(192), true);
-                    
-                    Box2 fgBox = new Box2(new Vector2(8f, 0f) / 32f, new Vector2(filledWidth, 3f) / 32f);
-                    fgBox = fgBox.Translated(baseOffset);
-                    worldHandle.DrawRect(fgBox, progressColor, true);
-                    
-                    Box2 shadowBox = new Box2(new Vector2(8f, 2f) / 32f, new Vector2(filledWidth, 3f) / 32f);
-                    shadowBox = shadowBox.Translated(baseOffset);
-                    worldHandle.DrawRect(shadowBox, Color.Black.WithAlpha(128), true);
-                }
+                float barWidth = width - 8f;
+                float filledWidth = barWidth * ratio + 8f;
+                
+                Box2 bgBox = new Box2(new Vector2(8f, 0f) / 32f, new Vector2(barWidth + 8f, 3f) / 32f);
+                bgBox = bgBox.Translated(baseOffset);
+                worldHandle.DrawRect(bgBox, Color.Black.WithAlpha(192), true);
+                
+                Box2 fgBox = new Box2(new Vector2(8f, 0f) / 32f, new Vector2(filledWidth, 3f) / 32f);
+                fgBox = fgBox.Translated(baseOffset);
+                worldHandle.DrawRect(fgBox, progressColor, true);
+                
+                Box2 shadowBox = new Box2(new Vector2(8f, 2f) / 32f, new Vector2(filledWidth, 3f) / 32f);
+                shadowBox = shadowBox.Translated(baseOffset);
+                worldHandle.DrawRect(shadowBox, Color.Black.WithAlpha(128), true);
             }
+        }
 
-            Matrix3x2 identity = Matrix3x2.Identity;
-            worldHandle.SetTransform(ref identity);
-        }
-        catch (System.TypeLoadException ex)
-        {
-            // Тип DamageableComponent не может быть загружен, пропускаем отрисовку
-            return;
-        }
-        catch (System.NullReferenceException)
-        {
-            // Некоторые компоненты могут быть null, пропускаем отрисовку
-            return;
-        }
-        catch (System.Exception)
-        {
-            // Игнорируем другие ошибки при отрисовке
-            return;
-        }
+        Matrix3x2 identity = Matrix3x2.Identity;
+        worldHandle.SetTransform(ref identity);
     }
 
-    private (float ratio, bool inCrit)? CalcProgress(EntityUid uid, MobStateComponent comp, DamageableComponent dmg, MobThresholdsComponent thresholds)
+    private (float ratio, bool inCrit)? CalcProgress(EntityUid uid, MobStateComponent comp, IComponent dmg, MobThresholdsComponent thresholds)
     {
         try
         {
@@ -154,17 +133,8 @@ public class HealthBarOverlay : Overlay
             }
             catch
             {
-                // Если не получилось через рефлексию, пробуем напрямую
-                try
-                {
-                    var totalDmg = dmg.TotalDamage;
-                    dmgVal = FixedPoint2.FromObject(totalDmg);
-                }
-                catch
-                {
-                    // Если и это не работает, возвращаем null
-                    return null;
-                }
+                // Если не получилось через рефлексию, возвращаем null
+                return null;
             }
             
             FixedPoint2? thresholdVal = null;
@@ -182,19 +152,8 @@ public class HealthBarOverlay : Overlay
             }
             catch
             {
-                // Если не получилось через рефлексию, пробуем напрямую через свойство
-                try
-                {
-                    if (dmg.HealthBarThreshold.HasValue)
-                    {
-                        var threshold = dmg.HealthBarThreshold.Value;
-                        thresholdVal = FixedPoint2.FromObject(threshold);
-                    }
-                }
-                catch
-                {
-                    // Игнорируем ошибку
-                }
+                // Если не получилось через рефлексию, игнорируем ошибку
+                // thresholdVal остается null
             }
 
         if (this._mobStateSystem.IsAlive(uid, comp) && thresholdVal != null && dmgVal < thresholdVal.Value)

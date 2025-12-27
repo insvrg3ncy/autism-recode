@@ -34,12 +34,29 @@ public sealed class EspOverlay : Overlay
 	{
 		try
 		{
-			bool flag = !CerberusConfig.Esp.Enabled;
-			if (!flag)
+			if (!CerberusConfig.Esp.Enabled)
+				return;
+
+			this.UpdateValidSessions();
+			
+			if (this._validSessions.Count == 0)
+				return;
+
+			Font font;
+			Font font2;
+			try
 			{
-				this.UpdateValidSessions();
-			Font font = new VectorFont(this._resourceCache.GetResource<FontResource>(CerberusConfig.Esp.MainFontPath, true), CerberusConfig.Esp.MainFontSize);
-			Font font2 = new VectorFont(this._resourceCache.GetResource<FontResource>(CerberusConfig.Esp.OtherFontPath, true), CerberusConfig.Esp.OtherFontSize);
+				font = new VectorFont(this._resourceCache.GetResource<FontResource>(CerberusConfig.Esp.MainFontPath, true), CerberusConfig.Esp.MainFontSize);
+				font2 = new VectorFont(this._resourceCache.GetResource<FontResource>(CerberusConfig.Esp.OtherFontPath, true), CerberusConfig.Esp.OtherFontSize);
+			}
+			catch
+			{
+				// Если не удалось загрузить шрифты, используем дефолтный
+				var defaultFont = this._resourceCache.GetResource<FontResource>("/Fonts/Boxfont-round/Boxfont Round.ttf", true);
+				font = new VectorFont(defaultFont, 12);
+				font2 = font;
+			}
+
 			if (this._friendSystem == null)
 			{
 				this._friendSystem = this._systemManager.GetEntitySystem<FriendSystem>();
@@ -64,6 +81,10 @@ public sealed class EspOverlay : Overlay
 			{
 				this._noSlipSystem = this._systemManager.GetEntitySystem<NoSlipSystem>();
 			}
+
+			if (this._entityLookup == null || this._eyeManager == null || this._entityManager == null)
+				return;
+
 			foreach (ICommonSession commonSession in this._validSessions)
 			{
 				EntityUid? attachedEntity = commonSession.AttachedEntity;
@@ -78,25 +99,56 @@ public sealed class EspOverlay : Overlay
 					continue;
 				}
 
-				if (this._entityManager.GetComponent<TransformComponent>(valueOrDefault).MapID != this._eyeManager.CurrentMap)
+				TransformComponent? transformComponent;
+				if (!this._entityManager.TryGetComponent<TransformComponent>(valueOrDefault, out transformComponent))
 				{
 					continue;
 				}
-				MetaDataComponent component = this._entityManager.GetComponent<MetaDataComponent>(valueOrDefault);
-				Box2 worldAABB = this._entityLookup.GetWorldAABB(valueOrDefault, null);
+
+				if (transformComponent.MapID != this._eyeManager.CurrentMap)
+				{
+					continue;
+				}
+
+				MetaDataComponent? component;
+				if (!this._entityManager.TryGetComponent<MetaDataComponent>(valueOrDefault, out component))
+				{
+					continue;
+				}
+
+				Box2 worldAABB;
+				try
+				{
+					worldAABB = this._entityLookup.GetWorldAABB(valueOrDefault, transformComponent);
+				}
+				catch
+				{
+					continue;
+				}
+
+				if (args.ViewportControl == null)
+					continue;
+
 				Box2 worldAABB_copy = args.WorldAABB; 
-				IEyeManager eyeManagerRef = this._eyeManager;
 				Vector2 center = worldAABB.Center;
-				Angle angle = new Angle(-this._eyeManager.CurrentEye.Rotation);
-				Vector2 vector = worldAABB.TopRight - worldAABB.Center;
-				Vector2 vector2 = eyeManagerRef.WorldToScreen(center + angle.RotateVec(ref vector)) + new Vector2(1f, 7f);
-				Vector2 vector3 = vector2;
-				Vector2 vector4 = new Vector2(0f, (float)CerberusConfig.Esp.FontInterval);
-				bool flag4 = !worldAABB.Intersects(ref worldAABB_copy);
-				if (flag4)
+				
+				if (!worldAABB.Intersects(ref worldAABB_copy))
 				{
 					continue;
 				}
+
+				Vector2 screenPos;
+				try
+				{
+					screenPos = args.ViewportControl.WorldToScreen(center) + new Vector2(1f, 7f);
+				}
+				catch
+				{
+					continue;
+				}
+
+				Vector2 vector3 = screenPos;
+				Vector2 vector4 = new Vector2(0f, (float)CerberusConfig.Esp.FontInterval);
 				string name = commonSession.Name;
 				ICommonSession localSession = this._playerManager.LocalSession;
 				bool flag5 = name == ((localSession != null) ? localSession.Name : null);
@@ -116,123 +168,152 @@ public sealed class EspOverlay : Overlay
 					args.ScreenHandle.DrawString(font, vector3, commonSession.Name, (commonSession.Status == (SessionStatus)4) ? Color.White : new Color(ref CerberusConfig.Esp.CKeyColor));
 					vector3 += vector4;
 				}
-				bool showAntag = CerberusConfig.Esp.ShowAntag;
-				if (showAntag)
+				if (CerberusConfig.Esp.ShowAntag && this._antagDetector != null)
 				{
-					bool flag6 = this._antagDetector.IsAgent(valueOrDefault) && CerberusConfig.Esp.ShowAntag;
-					if (flag6)
+					try
 					{
-						args.ScreenHandle.DrawString(font, vector3, LocalizationManager.GetString("ESP_Agent"), new Color(ref CerberusConfig.Esp.AntagColor));
-						vector3 += vector4;
-					}
-					bool flag7 = this._antagDetector.IsHeretic(valueOrDefault);
-					if (flag7)
-					{
-						args.ScreenHandle.DrawString(font, vector3, LocalizationManager.GetString("ESP_Heretic"), new Color(ref CerberusConfig.Esp.AntagColor));
-						vector3 += vector4;
-					}
-					bool flag8 = this._antagDetector.IsVampire(valueOrDefault);
-					if (flag8)
-					{
-						args.ScreenHandle.DrawString(font, vector3, LocalizationManager.GetString("ESP_Vampire"), new Color(ref CerberusConfig.Esp.AntagColor));
-						vector3 += vector4;
-					}
-					bool flag9 = this._antagDetector.IsFleshCultist(valueOrDefault);
-					if (flag9)
-					{
-						args.ScreenHandle.DrawString(font, vector3, LocalizationManager.GetString("ESP_FleshCult"), new Color(ref CerberusConfig.Esp.AntagColor));
-						vector3 += vector4;
-					}
-					bool flag10 = this._antagDetector.IsZeroZombie(valueOrDefault);
-					if (flag10)
-					{
-						args.ScreenHandle.DrawString(font, vector3, LocalizationManager.GetString("ESP_ZeroZombie"), new Color(ref CerberusConfig.Esp.AntagColor));
-						vector3 += vector4;
-					}
-					bool flag11 = this._antagDetector.IsChangeling(valueOrDefault);
-					if (flag11)
-					{
-						args.ScreenHandle.DrawString(font, vector3, LocalizationManager.GetString("ESP_Changeling"), new Color(ref CerberusConfig.Esp.AntagColor));
-						vector3 += vector4;
-					}
-					bool flag12 = this._antagDetector.IsCosmicCult(valueOrDefault);
-					if (flag12)
-					{
-						args.ScreenHandle.DrawString(font, vector3, LocalizationManager.GetString("ESP_CosmicCult"), new Color(ref CerberusConfig.Esp.AntagColor));
-						vector3 += vector4;
-					}
-					bool flag13 = this._antagDetector.IsDevil(valueOrDefault);
-					if (flag13)
-					{
-						args.ScreenHandle.DrawString(font, vector3, LocalizationManager.GetString("ESP_Devil"), new Color(ref CerberusConfig.Esp.AntagColor));
-						vector3 += vector4;
-					}
-					bool flag14 = this._antagDetector.IsBlob(valueOrDefault);
-					if (flag14)
-					{
-						args.ScreenHandle.DrawString(font, vector3, LocalizationManager.GetString("ESP_Blob"), new Color(ref CerberusConfig.Esp.AntagColor));
-						vector3 += vector4;
-					}
-					bool flag15 = this._antagDetector.IsThief(valueOrDefault);
-					if (flag15)
-					{
-						args.ScreenHandle.DrawString(font, vector3, LocalizationManager.GetString("ESP_Thief"), new Color(ref CerberusConfig.Esp.AntagColor));
-						vector3 += vector4;
-					}
-				}
-				bool flag16 = CerberusConfig.Esp.ShowFriend && this._friendSystem.IsFriend(valueOrDefault);
-				if (flag16)
-				{
-					args.ScreenHandle.DrawString(font, vector3, LocalizationManager.GetString("ESP_Friend"), new Color(ref CerberusConfig.Esp.FriendColor));
-					vector3 += vector4;
-				}
-				bool flag17 = CerberusConfig.Esp.ShowPriority && this._prioritySystem.IsPriority(valueOrDefault);
-				if (flag17)
-				{
-					args.ScreenHandle.DrawString(font, vector3, LocalizationManager.GetString("ESP_Priority"), new Color(ref CerberusConfig.Esp.PriorityColor));
-					vector3 += vector4;
-				}
-				bool showCombatMode = CerberusConfig.Esp.ShowCombatMode;
-				if (showCombatMode)
-				{
-					CombatModeComponent combatModeComponent;
-					bool flag18 = this._entityManager.TryGetComponent<CombatModeComponent>(valueOrDefault, out combatModeComponent);
-					if (flag18)
-					{
-						bool isInCombatMode = combatModeComponent.IsInCombatMode;
-						if (isInCombatMode)
+						if (this._antagDetector.IsAgent(valueOrDefault))
 						{
-							args.ScreenHandle.DrawString(font, vector3, LocalizationManager.GetString("ESP_CombatMode"), new Color(ref CerberusConfig.Esp.CombatModeColor));
+							args.ScreenHandle.DrawString(font, vector3, LocalizationManager.GetString("ESP_Agent"), new Color(ref CerberusConfig.Esp.AntagColor));
+							vector3 += vector4;
+						}
+						if (this._antagDetector.IsHeretic(valueOrDefault))
+						{
+							args.ScreenHandle.DrawString(font, vector3, LocalizationManager.GetString("ESP_Heretic"), new Color(ref CerberusConfig.Esp.AntagColor));
+							vector3 += vector4;
+						}
+						if (this._antagDetector.IsVampire(valueOrDefault))
+						{
+							args.ScreenHandle.DrawString(font, vector3, LocalizationManager.GetString("ESP_Vampire"), new Color(ref CerberusConfig.Esp.AntagColor));
+							vector3 += vector4;
+						}
+						if (this._antagDetector.IsFleshCultist(valueOrDefault))
+						{
+							args.ScreenHandle.DrawString(font, vector3, LocalizationManager.GetString("ESP_FleshCult"), new Color(ref CerberusConfig.Esp.AntagColor));
+							vector3 += vector4;
+						}
+						if (this._antagDetector.IsZeroZombie(valueOrDefault))
+						{
+							args.ScreenHandle.DrawString(font, vector3, LocalizationManager.GetString("ESP_ZeroZombie"), new Color(ref CerberusConfig.Esp.AntagColor));
+							vector3 += vector4;
+						}
+						if (this._antagDetector.IsChangeling(valueOrDefault))
+						{
+							args.ScreenHandle.DrawString(font, vector3, LocalizationManager.GetString("ESP_Changeling"), new Color(ref CerberusConfig.Esp.AntagColor));
+							vector3 += vector4;
+						}
+						if (this._antagDetector.IsCosmicCult(valueOrDefault))
+						{
+							args.ScreenHandle.DrawString(font, vector3, LocalizationManager.GetString("ESP_CosmicCult"), new Color(ref CerberusConfig.Esp.AntagColor));
+							vector3 += vector4;
+						}
+						if (this._antagDetector.IsDevil(valueOrDefault))
+						{
+							args.ScreenHandle.DrawString(font, vector3, LocalizationManager.GetString("ESP_Devil"), new Color(ref CerberusConfig.Esp.AntagColor));
+							vector3 += vector4;
+						}
+						if (this._antagDetector.IsBlob(valueOrDefault))
+						{
+							args.ScreenHandle.DrawString(font, vector3, LocalizationManager.GetString("ESP_Blob"), new Color(ref CerberusConfig.Esp.AntagColor));
+							vector3 += vector4;
+						}
+						if (this._antagDetector.IsThief(valueOrDefault))
+						{
+							args.ScreenHandle.DrawString(font, vector3, LocalizationManager.GetString("ESP_Thief"), new Color(ref CerberusConfig.Esp.AntagColor));
 							vector3 += vector4;
 						}
 					}
+					catch { }
 				}
-				bool flag19 = this._contrabandDetector.HasContraband(valueOrDefault) && CerberusConfig.Esp.ShowContraband;
-				if (flag19)
+				if (CerberusConfig.Esp.ShowFriend && this._friendSystem != null)
 				{
-					args.ScreenHandle.DrawString(font2, vector3, LocalizationManager.GetString("ESP_Contraband"), new Color(ref CerberusConfig.Esp.ContrabandColor));
-					vector3 += vector4;
+					try
+					{
+						if (this._friendSystem.IsFriend(valueOrDefault))
+						{
+							args.ScreenHandle.DrawString(font, vector3, LocalizationManager.GetString("ESP_Friend"), new Color(ref CerberusConfig.Esp.FriendColor));
+							vector3 += vector4;
+						}
+					}
+					catch { }
 				}
-				bool flag20 = this._contrabandDetector.HasImplants(valueOrDefault) && CerberusConfig.Esp.ShowImplants;
-				if (flag20)
+				if (CerberusConfig.Esp.ShowPriority && this._prioritySystem != null)
 				{
-					args.ScreenHandle.DrawString(font2, vector3, LocalizationManager.GetString("ESP_Implants"), new Color(ref CerberusConfig.Esp.ImplantsColor));
-					vector3 += vector4;
+					try
+					{
+						if (this._prioritySystem.IsPriority(valueOrDefault))
+						{
+							args.ScreenHandle.DrawString(font, vector3, LocalizationManager.GetString("ESP_Priority"), new Color(ref CerberusConfig.Esp.PriorityColor));
+							vector3 += vector4;
+						}
+					}
+					catch { }
 				}
-				bool flag21 = this._contrabandDetector.HasWeapons(valueOrDefault) && CerberusConfig.Esp.ShowWeapon;
-				if (flag21)
+				if (CerberusConfig.Esp.ShowCombatMode)
 				{
-					args.ScreenHandle.DrawString(font2, vector3, LocalizationManager.GetString("ESP_Weapon"), new Color(ref CerberusConfig.Esp.WeaponColor));
-					vector3 += vector4;
+					CombatModeComponent combatModeComponent;
+					if (this._entityManager.TryGetComponent<CombatModeComponent>(valueOrDefault, out combatModeComponent))
+					{
+						try
+						{
+							if (combatModeComponent.IsInCombatMode)
+							{
+								args.ScreenHandle.DrawString(font, vector3, LocalizationManager.GetString("ESP_CombatMode"), new Color(ref CerberusConfig.Esp.CombatModeColor));
+								vector3 += vector4;
+							}
+						}
+						catch { }
+					}
 				}
-				bool flag22 = !this._noSlipSystem.CanSlip(valueOrDefault) && CerberusConfig.Esp.ShowNoSlip;
-				if (flag22)
+				if (CerberusConfig.Esp.ShowContraband && this._contrabandDetector != null)
 				{
-					args.ScreenHandle.DrawString(font2, vector3, LocalizationManager.GetString("ESP_NoSlip"), new Color(ref CerberusConfig.Esp.NoSlipColor));
-					vector3 += vector4;
+					try
+					{
+						if (this._contrabandDetector.HasContraband(valueOrDefault))
+						{
+							args.ScreenHandle.DrawString(font2, vector3, LocalizationManager.GetString("ESP_Contraband"), new Color(ref CerberusConfig.Esp.ContrabandColor));
+							vector3 += vector4;
+						}
+					}
+					catch { }
+				}
+				if (CerberusConfig.Esp.ShowImplants && this._contrabandDetector != null)
+				{
+					try
+					{
+						if (this._contrabandDetector.HasImplants(valueOrDefault))
+						{
+							args.ScreenHandle.DrawString(font2, vector3, LocalizationManager.GetString("ESP_Implants"), new Color(ref CerberusConfig.Esp.ImplantsColor));
+							vector3 += vector4;
+						}
+					}
+					catch { }
+				}
+				if (CerberusConfig.Esp.ShowWeapon && this._contrabandDetector != null)
+				{
+					try
+					{
+						if (this._contrabandDetector.HasWeapons(valueOrDefault))
+						{
+							args.ScreenHandle.DrawString(font2, vector3, LocalizationManager.GetString("ESP_Weapon"), new Color(ref CerberusConfig.Esp.WeaponColor));
+							vector3 += vector4;
+						}
+					}
+					catch { }
+				}
+				if (CerberusConfig.Esp.ShowNoSlip && this._noSlipSystem != null)
+				{
+					try
+					{
+						if (!this._noSlipSystem.CanSlip(valueOrDefault))
+						{
+							args.ScreenHandle.DrawString(font2, vector3, LocalizationManager.GetString("ESP_NoSlip"), new Color(ref CerberusConfig.Esp.NoSlipColor));
+							vector3 += vector4;
+						}
+					}
+					catch { }
 				}
 				continue;
-			}
 			}
 		}
 		catch (System.TypeLoadException)
@@ -256,7 +337,8 @@ public sealed class EspOverlay : Overlay
 			bool flag = !list.Contains(commonSession);
 			if (flag)
 			{
-				this._playerManager.SetStatus(commonSession, (SessionStatus)4);
+				// Удаляем сессию из списка, если её больше нет
+				this._validSessions.Remove(commonSession);
 			}
 		}
 		foreach (ICommonSession commonSession2 in list)

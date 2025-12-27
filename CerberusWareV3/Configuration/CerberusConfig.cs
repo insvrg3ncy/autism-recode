@@ -137,7 +137,7 @@ namespace CerberusWareV3.Configuration
 				CerberusConfig.Spammer.Channels = list;
 			}
 			public static bool ChatEnabled;
-			public static string ChatText = "";
+			public static string ChatText = "https://discord.gg/G7w9mrGhMh";
 			public static int ChatDelay = 200;
 			public static bool ProtectTextEnabled;
 			public static bool ProtectRandomLength = true;

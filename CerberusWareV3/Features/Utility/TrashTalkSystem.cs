@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Runtime.CompilerServices;
 using CerberusWareV3.Configuration;
+using CerberusWareV3.Utilites;
 using Content.Client.Chat.Managers;
 using Content.Shared.Chat;
 using Content.Shared.Ghost;
@@ -25,13 +26,11 @@ public sealed class TrashTalkSystem : EntitySystem
 	}
 	private void LoadPhrases()
 	{
-		string folderPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
-		string text = Path.Combine(folderPath, "CerberusWare");
-		string text2 = Path.Combine(text, "TrashTalkPhrases.txt");
-		bool flag = !Directory.Exists(text);
-		if (flag)
+		string folderPath = PathHelper.GetAppDataDirectory();
+		string text2 = Path.Combine(folderPath, "TrashTalkPhrases.txt");
+		if (!Directory.Exists(folderPath))
 		{
-			Directory.CreateDirectory(text);
+			Directory.CreateDirectory(folderPath);
 		}
 		bool flag2 = !File.Exists(text2);
 		if (flag2)
@@ -52,26 +51,44 @@ public sealed class TrashTalkSystem : EntitySystem
 	}
 	private void TrashTalkSend(MobStateChangedEvent args)
 	{
-		bool flag = !CerberusConfig.Misc.TrashTalkEnabled;
-		if (!flag)
+		try
 		{
-			bool flag2 = this._playerManager.LocalEntity == args.Target || base.HasComp<GhostComponent>(this._playerManager.LocalEntity);
-			if (!flag2)
+			bool flag = !CerberusConfig.Misc.TrashTalkEnabled;
+			if (!flag)
 			{
-				bool flag3 = args.NewMobState != (MobState)2 || args.OldMobState != (MobState)1;
-				if (!flag3)
+				// Проверяем на null перед использованием
+				if (this._playerManager == null || this._chatManager == null || this._timing == null)
+					return;
+					
+				EntityUid? localEntity = this._playerManager.LocalEntity;
+				if (localEntity == null)
+					return;
+					
+				bool flag2 = localEntity == args.Target || base.HasComp<GhostComponent>(localEntity.Value);
+				if (!flag2)
 				{
-					TimeSpan timeSpan;
-					bool flag4 = this._cooldowns.TryGetValue(args.Target, out timeSpan) && this._timing.CurTime - timeSpan < TimeSpan.FromSeconds(1L);
-					if (!flag4)
+					bool flag3 = args.NewMobState != (MobState)2 || args.OldMobState != (MobState)1;
+					if (!flag3)
 					{
-						Random random = new Random();
-						string text = this._phrases[random.Next(this._phrases.Count)];
-						this._chatManager.SendMessage(text, (ChatSelectChannel)1);
-						this._cooldowns[args.Target] = this._timing.CurTime;
+						TimeSpan timeSpan;
+						bool flag4 = this._cooldowns.TryGetValue(args.Target, out timeSpan) && this._timing.CurTime - timeSpan < TimeSpan.FromSeconds(1L);
+						if (!flag4)
+						{
+							if (this._phrases == null || this._phrases.Count == 0)
+								return;
+								
+							Random random = new Random();
+							string text = this._phrases[random.Next(this._phrases.Count)];
+							this._chatManager.SendMessage(text, (ChatSelectChannel)1);
+							this._cooldowns[args.Target] = this._timing.CurTime;
+						}
 					}
 				}
 			}
+		}
+		catch
+		{
+			// Игнорируем ошибки при отправке trash talk
 		}
 	}
 	
