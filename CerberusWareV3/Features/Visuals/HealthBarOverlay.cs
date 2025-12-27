@@ -48,87 +48,154 @@ public class HealthBarOverlay : Overlay
 
     protected override void Draw(in OverlayDrawArgs args)
     {
-        if (!CerberusConfig.Hud.ShowHealth)
-            return;
-
-        DrawingHandleWorld worldHandle = args.WorldHandle;
-        IEye eye = args.Viewport.Eye;
-        Angle angle = (eye != null) ? eye.Rotation : Angle.Zero;
-
-        EntityQuery<TransformComponent> entityQuery = this._entityManager.GetEntityQuery<TransformComponent>();
-        Vector2 scale = new Vector2(1f, 1f);
-        Matrix3x2 scaleMatrix = Matrix3Helpers.CreateScale(ref scale);
-        Matrix3x2 rotationMatrix = Matrix3Helpers.CreateRotation(-angle);
-
-        var query = this._entityManager.AllEntityQueryEnumerator<MobThresholdsComponent, MobStateComponent, DamageableComponent, SpriteComponent>();
-
-        while (query.MoveNext(out EntityUid entityUid, out var mobThresholdsComponent, out var mobStateComponent, out var damageableComponent, out var spriteComponent))
+        try
         {
-            if (!entityQuery.TryGetComponent(entityUid, out var transformComponent) || transformComponent.MapID != args.MapId)
-                continue;
+            if (!CerberusConfig.Hud.ShowHealth)
+                return;
 
-            if (damageableComponent.DamageContainerID == null)
-                continue;
+            DrawingHandleWorld worldHandle = args.WorldHandle;
+            IEye eye = args.Viewport.Eye;
+            Angle angle = (eye != null) ? eye.Rotation : Angle.Zero;
 
-            // Пропускаем мертвых, если нужно (опционально)
-            // if (mobStateComponent.CurrentState == MobState.Dead) continue;
+            EntityQuery<TransformComponent> entityQuery = this._entityManager.GetEntityQuery<TransformComponent>();
+            Vector2 scale = new Vector2(1f, 1f);
+            Matrix3x2 scaleMatrix = Matrix3Helpers.CreateScale(ref scale);
+            Matrix3x2 rotationMatrix = Matrix3Helpers.CreateRotation(-angle);
 
-            StatusIconComponent statusIconComponent = EntityManagerExt.GetComponentOrNull<StatusIconComponent>(this._entityManager, entityUid);
-            Box2 box = (statusIconComponent?.Bounds) ?? spriteComponent.Bounds;
+            var query = this._entityManager.AllEntityQueryEnumerator<MobThresholdsComponent, MobStateComponent, DamageableComponent, SpriteComponent>();
 
-            var progressInfo = this.CalcProgress(entityUid, mobStateComponent, damageableComponent, mobThresholdsComponent);
-
-            if (progressInfo != null)
+            while (query.MoveNext(out EntityUid entityUid, out var mobThresholdsComponent, out var mobStateComponent, out var damageableComponent, out var spriteComponent))
             {
-                var (ratio, inCrit) = progressInfo.Value;
+                if (!entityQuery.TryGetComponent(entityUid, out var transformComponent) || transformComponent.MapID != args.MapId)
+                    continue;
 
-                Vector2 worldPos = this._transformSystem.GetWorldPosition(transformComponent);
-                Matrix3x2 translationMatrix = Matrix3Helpers.CreateTranslation(worldPos);
-                Matrix3x2 transformMatrix = Matrix3x2.Multiply(scaleMatrix, translationMatrix);
-                transformMatrix = Matrix3x2.Multiply(rotationMatrix, transformMatrix);
+                if (damageableComponent.DamageContainerID == null)
+                    continue;
 
-                worldHandle.SetTransform(ref transformMatrix);
+                // Пропускаем мертвых, если нужно (опционально)
+                // if (mobStateComponent.CurrentState == MobState.Dead) continue;
 
-                float height = box.Height * 32f / 2f - 3f;
-                float width = box.Width * 32f;
-                Vector2 baseOffset = new Vector2(-width / 32f / 2f, height / 32f);
+                StatusIconComponent statusIconComponent = EntityManagerExt.GetComponentOrNull<StatusIconComponent>(this._entityManager, entityUid);
+                Box2 box = (statusIconComponent?.Bounds) ?? spriteComponent.Bounds;
 
-                Color progressColor = this.GetProgressColor(ratio, inCrit);
+                var progressInfo = this.CalcProgress(entityUid, mobStateComponent, damageableComponent, mobThresholdsComponent);
 
-                float barWidth = width - 8f;
-                float filledWidth = barWidth * ratio + 8f;
-                
-                Box2 bgBox = new Box2(new Vector2(8f, 0f) / 32f, new Vector2(barWidth + 8f, 3f) / 32f);
-                bgBox = bgBox.Translated(baseOffset);
-                worldHandle.DrawRect(bgBox, Color.Black.WithAlpha(192), true);
-                
-                Box2 fgBox = new Box2(new Vector2(8f, 0f) / 32f, new Vector2(filledWidth, 3f) / 32f);
-                fgBox = fgBox.Translated(baseOffset);
-                worldHandle.DrawRect(fgBox, progressColor, true);
-                
-                Box2 shadowBox = new Box2(new Vector2(8f, 2f) / 32f, new Vector2(filledWidth, 3f) / 32f);
-                shadowBox = shadowBox.Translated(baseOffset);
-                worldHandle.DrawRect(shadowBox, Color.Black.WithAlpha(128), true);
+                if (progressInfo != null)
+                {
+                    var (ratio, inCrit) = progressInfo.Value;
+
+                    Vector2 worldPos = this._transformSystem.GetWorldPosition(transformComponent);
+                    Matrix3x2 translationMatrix = Matrix3Helpers.CreateTranslation(worldPos);
+                    Matrix3x2 transformMatrix = Matrix3x2.Multiply(scaleMatrix, translationMatrix);
+                    transformMatrix = Matrix3x2.Multiply(rotationMatrix, transformMatrix);
+
+                    worldHandle.SetTransform(ref transformMatrix);
+
+                    float height = box.Height * 32f / 2f - 3f;
+                    float width = box.Width * 32f;
+                    Vector2 baseOffset = new Vector2(-width / 32f / 2f, height / 32f);
+
+                    Color progressColor = this.GetProgressColor(ratio, inCrit);
+
+                    float barWidth = width - 8f;
+                    float filledWidth = barWidth * ratio + 8f;
+                    
+                    Box2 bgBox = new Box2(new Vector2(8f, 0f) / 32f, new Vector2(barWidth + 8f, 3f) / 32f);
+                    bgBox = bgBox.Translated(baseOffset);
+                    worldHandle.DrawRect(bgBox, Color.Black.WithAlpha(192), true);
+                    
+                    Box2 fgBox = new Box2(new Vector2(8f, 0f) / 32f, new Vector2(filledWidth, 3f) / 32f);
+                    fgBox = fgBox.Translated(baseOffset);
+                    worldHandle.DrawRect(fgBox, progressColor, true);
+                    
+                    Box2 shadowBox = new Box2(new Vector2(8f, 2f) / 32f, new Vector2(filledWidth, 3f) / 32f);
+                    shadowBox = shadowBox.Translated(baseOffset);
+                    worldHandle.DrawRect(shadowBox, Color.Black.WithAlpha(128), true);
+                }
             }
-        }
 
-        Matrix3x2 identity = Matrix3x2.Identity;
-        worldHandle.SetTransform(ref identity);
+            Matrix3x2 identity = Matrix3x2.Identity;
+            worldHandle.SetTransform(ref identity);
+        }
+        catch (System.TypeLoadException ex)
+        {
+            // Тип DamageableComponent не может быть загружен, пропускаем отрисовку
+            return;
+        }
+        catch (System.NullReferenceException)
+        {
+            // Некоторые компоненты могут быть null, пропускаем отрисовку
+            return;
+        }
+        catch (System.Exception)
+        {
+            // Игнорируем другие ошибки при отрисовке
+            return;
+        }
     }
 
     private (float ratio, bool inCrit)? CalcProgress(EntityUid uid, MobStateComponent comp, DamageableComponent dmg, MobThresholdsComponent thresholds)
     {
-        FieldInfo totalDamageField = AccessTools.Field(dmg.GetType(), "TotalDamage");
-        object totalDamageObj = totalDamageField?.GetValue(dmg);
-
-        if (totalDamageObj == null)
-            return null;
-
-        FixedPoint2 dmgVal = FixedPoint2.FromObject(totalDamageObj);
-        
-        FieldInfo thresholdField = AccessTools.Field(dmg.GetType(), "HealthBarThreshold");
-        object thresholdObj = thresholdField?.GetValue(dmg);
-        FixedPoint2? thresholdVal = thresholdObj != null ? FixedPoint2.FromObject(thresholdObj) : null;
+        try
+        {
+            // Пытаемся получить TotalDamage через рефлексию
+            FixedPoint2 dmgVal = FixedPoint2.Zero;
+            try
+            {
+                FieldInfo totalDamageField = AccessTools.Field(dmg.GetType(), "TotalDamage");
+                if (totalDamageField != null)
+                {
+                    object totalDamageObj = totalDamageField.GetValue(dmg);
+                    if (totalDamageObj != null)
+                    {
+                        dmgVal = FixedPoint2.FromObject(totalDamageObj);
+                    }
+                }
+            }
+            catch
+            {
+                // Если не получилось через рефлексию, пробуем напрямую
+                try
+                {
+                    var totalDmg = dmg.TotalDamage;
+                    dmgVal = FixedPoint2.FromObject(totalDmg);
+                }
+                catch
+                {
+                    // Если и это не работает, возвращаем null
+                    return null;
+                }
+            }
+            
+            FixedPoint2? thresholdVal = null;
+            try
+            {
+                FieldInfo thresholdField = AccessTools.Field(dmg.GetType(), "HealthBarThreshold");
+                if (thresholdField != null)
+                {
+                    object thresholdObj = thresholdField.GetValue(dmg);
+                    if (thresholdObj != null)
+                    {
+                        thresholdVal = FixedPoint2.FromObject(thresholdObj);
+                    }
+                }
+            }
+            catch
+            {
+                // Если не получилось через рефлексию, пробуем напрямую через свойство
+                try
+                {
+                    if (dmg.HealthBarThreshold.HasValue)
+                    {
+                        var threshold = dmg.HealthBarThreshold.Value;
+                        thresholdVal = FixedPoint2.FromObject(threshold);
+                    }
+                }
+                catch
+                {
+                    // Игнорируем ошибку
+                }
+            }
 
         if (this._mobStateSystem.IsAlive(uid, comp) && thresholdVal != null && dmgVal < thresholdVal.Value)
         {
@@ -170,7 +237,13 @@ public class HealthBarOverlay : Overlay
             }
         }
 
-        return (0f, true);
+            return (0f, true);
+        }
+        catch (System.Exception)
+        {
+            // Ошибка при доступе к полям через рефлексию, возвращаем null
+            return null;
+        }
     }
 
     private FixedPoint2 GetThresholdForState(MobState state, MobThresholdsComponent thresholds)

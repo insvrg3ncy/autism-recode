@@ -771,9 +771,12 @@ public sealed class MainMenuWindow : DefaultWindow
         };
         container.AddChild(title);
 
-        var enabledToggle = new ToggleControl(LocalizationManager.GetString("AimBot_Gun_Enabled"));
-        enabledToggle.Value = CerberusConfig.GunAimBot.Enabled;
-        enabledToggle.ValueChanged += v => CerberusConfig.GunAimBot.Enabled = v;
+        var enabledToggle = new CheckBox
+        {
+            Text = LocalizationManager.GetString("AimBot_Gun_Enabled")
+        };
+        enabledToggle.Pressed = CerberusConfig.GunAimBot.Enabled;
+        enabledToggle.OnToggled += args => CerberusConfig.GunAimBot.Enabled = args.Pressed;
         container.AddChild(enabledToggle);
 
         var gunHotkey = new KeyBindInputControl(LocalizationManager.GetString("AimBot_Gun_HotKey"));
@@ -781,47 +784,99 @@ public sealed class MainMenuWindow : DefaultWindow
         gunHotkey.KeyBindChanged += v => CerberusConfig.GunAimBot.HotKey = v;
         container.AddChild(gunHotkey);
 
-        var radiusSlider = new SliderControl(LocalizationManager.GetString("AimBot_Gun_Radius"), 0f, 10f, CerberusConfig.GunAimBot.CircleRadius);
-        radiusSlider.ValueChanged += v => CerberusConfig.GunAimBot.CircleRadius = v;
+        var radiusSliderLabel = new Label
+        {
+            Text = LocalizationManager.GetString("AimBot_Gun_Radius")
+        };
+        container.AddChild(radiusSliderLabel);
+        var radiusSlider = new Slider
+        {
+            MinValue = 0f,
+            MaxValue = 10f,
+            Value = CerberusConfig.GunAimBot.CircleRadius
+        };
+        radiusSlider.OnValueChanged += _ => CerberusConfig.GunAimBot.CircleRadius = radiusSlider.Value;
         container.AddChild(radiusSlider);
 
-        var priorityCombo = new ComboControl(LocalizationManager.GetString("AimBot_Gun_Priority"), GetTargetPriorityNames());
-        priorityCombo.SelectedIndex = CerberusConfig.GunAimBot.TargetPriority;
-        priorityCombo.SelectedIndexChanged += i => CerberusConfig.GunAimBot.TargetPriority = i;
+        var priorityComboLabel = new Label
+        {
+            Text = LocalizationManager.GetString("AimBot_Gun_Priority")
+        };
+        container.AddChild(priorityComboLabel);
+        var priorityCombo = new OptionButton
+        {
+            Prefix = LocalizationManager.GetString("AimBot_Gun_Priority") + ": "
+        };
+        var priorityNames = GetTargetPriorityNames();
+        for (int i = 0; i < priorityNames.Length; i++)
+        {
+            priorityCombo.AddItem(priorityNames[i], i);
+        }
+        priorityCombo.Select((int)CerberusConfig.GunAimBot.TargetPriority);
+        priorityCombo.OnItemSelected += args => CerberusConfig.GunAimBot.TargetPriority = args.Id;
         container.AddChild(priorityCombo);
 
-        var onlyPriorityToggle = new ToggleControl(LocalizationManager.GetString("AimBot_OnlyPriority"));
-        onlyPriorityToggle.Value = CerberusConfig.GunAimBot.OnlyPriority;
-        onlyPriorityToggle.ValueChanged += v => CerberusConfig.GunAimBot.OnlyPriority = v;
+        var onlyPriorityToggle = new CheckBox
+        {
+            Text = LocalizationManager.GetString("AimBot_OnlyPriority")
+        };
+        onlyPriorityToggle.Pressed = CerberusConfig.GunAimBot.OnlyPriority;
+        onlyPriorityToggle.OnToggled += args => CerberusConfig.GunAimBot.OnlyPriority = args.Pressed;
         container.AddChild(onlyPriorityToggle);
 
-        var criticalToggle = new ToggleControl(LocalizationManager.GetString("AimBot_Gun_Critical"));
-        criticalToggle.Value = CerberusConfig.GunAimBot.TargetCritical;
-        criticalToggle.ValueChanged += v => CerberusConfig.GunAimBot.TargetCritical = v;
+        var criticalToggle = new CheckBox
+        {
+            Text = LocalizationManager.GetString("AimBot_Gun_Critical")
+        };
+        criticalToggle.Pressed = CerberusConfig.GunAimBot.TargetCritical;
+        criticalToggle.OnToggled += args => CerberusConfig.GunAimBot.TargetCritical = args.Pressed;
         container.AddChild(criticalToggle);
 
-        var minSpreadToggle = new ToggleControl(LocalizationManager.GetString("AimBot_Gun_MinimalSpread"));
-        minSpreadToggle.Value = CerberusConfig.GunAimBot.MinSpread;
-        minSpreadToggle.ValueChanged += v => CerberusConfig.GunAimBot.MinSpread = v;
+        var minSpreadToggle = new CheckBox
+        {
+            Text = LocalizationManager.GetString("AimBot_Gun_MinimalSpread")
+        };
+        minSpreadToggle.Pressed = CerberusConfig.GunAimBot.MinSpread;
+        minSpreadToggle.OnToggled += args => CerberusConfig.GunAimBot.MinSpread = args.Pressed;
         container.AddChild(minSpreadToggle);
 
-        var hitScanToggle = new ToggleControl(LocalizationManager.GetString("AimBot_Gun_HitScan"));
-        hitScanToggle.Value = CerberusConfig.GunAimBot.HitScan;
-        hitScanToggle.ValueChanged += v => CerberusConfig.GunAimBot.HitScan = v;
+        var hitScanToggle = new CheckBox
+        {
+            Text = LocalizationManager.GetString("AimBot_Gun_HitScan")
+        };
+        hitScanToggle.Pressed = CerberusConfig.GunAimBot.HitScan;
+        hitScanToggle.OnToggled += args => CerberusConfig.GunAimBot.HitScan = args.Pressed;
         container.AddChild(hitScanToggle);
 
-        var autoPredictToggle = new ToggleControl(LocalizationManager.GetString("AimBot_Gun_AutoPredict"));
-        autoPredictToggle.Value = CerberusConfig.GunAimBot.AutoPredict;
-        autoPredictToggle.ValueChanged += v => CerberusConfig.GunAimBot.AutoPredict = v;
+        var autoPredictToggle = new CheckBox
+        {
+            Text = LocalizationManager.GetString("AimBot_Gun_AutoPredict")
+        };
+        autoPredictToggle.Pressed = CerberusConfig.GunAimBot.AutoPredict;
+        autoPredictToggle.OnToggled += args => CerberusConfig.GunAimBot.AutoPredict = args.Pressed;
         container.AddChild(autoPredictToggle);
 
-        var predictToggle = new ToggleControl(LocalizationManager.GetString("AimBot_Gun_Predict"));
-        predictToggle.Value = CerberusConfig.GunAimBot.PredictEnabled;
-        predictToggle.ValueChanged += v => CerberusConfig.GunAimBot.PredictEnabled = v;
+        var predictToggle = new CheckBox
+        {
+            Text = LocalizationManager.GetString("AimBot_Gun_Predict")
+        };
+        predictToggle.Pressed = CerberusConfig.GunAimBot.PredictEnabled;
+        predictToggle.OnToggled += args => CerberusConfig.GunAimBot.PredictEnabled = args.Pressed;
         container.AddChild(predictToggle);
 
-        var predictCorrectionSlider = new SliderControl(LocalizationManager.GetString("AimBot_Gun_PredictCorrection"), 0f, 1000f, CerberusConfig.GunAimBot.PredictCorrection);
-        predictCorrectionSlider.ValueChanged += v => CerberusConfig.GunAimBot.PredictCorrection = v;
+        var predictCorrectionSliderLabel = new Label
+        {
+            Text = LocalizationManager.GetString("AimBot_Gun_PredictCorrection")
+        };
+        container.AddChild(predictCorrectionSliderLabel);
+        var predictCorrectionSlider = new Slider
+        {
+            MinValue = 0f,
+            MaxValue = 1000f,
+            Value = CerberusConfig.GunAimBot.PredictCorrection
+        };
+        predictCorrectionSlider.OnValueChanged += _ => CerberusConfig.GunAimBot.PredictCorrection = predictCorrectionSlider.Value;
+
         container.AddChild(predictCorrectionSlider);
 
         parent.AddChild(container);
@@ -844,14 +899,20 @@ public sealed class MainMenuWindow : DefaultWindow
         };
         container.AddChild(title);
 
-        var circleToggle = new ToggleControl(LocalizationManager.GetString("AimBot_Gun_Circle"));
-        circleToggle.Value = CerberusConfig.GunAimBot.ShowCircle;
-        circleToggle.ValueChanged += v => CerberusConfig.GunAimBot.ShowCircle = v;
+        var circleToggle = new CheckBox
+        {
+            Text = LocalizationManager.GetString("AimBot_Gun_Circle")
+        };
+        circleToggle.Pressed = CerberusConfig.GunAimBot.ShowCircle;
+        circleToggle.OnToggled += args => CerberusConfig.GunAimBot.ShowCircle = args.Pressed;
         container.AddChild(circleToggle);
 
-        var lineToggle = new ToggleControl(LocalizationManager.GetString("AimBot_Gun_Line"));
-        lineToggle.Value = CerberusConfig.GunAimBot.ShowLine;
-        lineToggle.ValueChanged += v => CerberusConfig.GunAimBot.ShowLine = v;
+        var lineToggle = new CheckBox
+        {
+            Text = LocalizationManager.GetString("AimBot_Gun_Line")
+        };
+        lineToggle.Pressed = CerberusConfig.GunAimBot.ShowLine;
+        lineToggle.OnToggled += args => CerberusConfig.GunAimBot.ShowLine = args.Pressed;
         container.AddChild(lineToggle);
 
         var colorPicker = new ColorPickerControl(LocalizationManager.GetString("AimBot_Gun_Color"));
@@ -879,28 +940,51 @@ public sealed class MainMenuWindow : DefaultWindow
         };
         container.AddChild(title);
 
-        var enabledHelperToggle = new ToggleControl(LocalizationManager.GetString("AimBot_Gun_EnabledHelper"));
-        enabledHelperToggle.Value = CerberusConfig.GunHelper.Enabled;
-        enabledHelperToggle.ValueChanged += v => CerberusConfig.GunHelper.Enabled = v;
+        var enabledHelperToggle = new CheckBox
+        {
+            Text = LocalizationManager.GetString("AimBot_Gun_EnabledHelper")
+        };
+        enabledHelperToggle.Pressed = CerberusConfig.GunHelper.Enabled;
+        enabledHelperToggle.OnToggled += args => CerberusConfig.GunHelper.Enabled = args.Pressed;
         container.AddChild(enabledHelperToggle);
 
-        var showAmmoToggle = new ToggleControl(LocalizationManager.GetString("AimBot_Gun_ShowAmmo"));
-        showAmmoToggle.Value = CerberusConfig.GunHelper.ShowAmmo;
-        showAmmoToggle.ValueChanged += v => CerberusConfig.GunHelper.ShowAmmo = v;
+        var showAmmoToggle = new CheckBox
+        {
+            Text = LocalizationManager.GetString("AimBot_Gun_ShowAmmo")
+        };
+        showAmmoToggle.Pressed = CerberusConfig.GunHelper.ShowAmmo;
+        showAmmoToggle.OnToggled += args => CerberusConfig.GunHelper.ShowAmmo = args.Pressed;
         container.AddChild(showAmmoToggle);
 
-        var autoBoltToggle = new ToggleControl(LocalizationManager.GetString("AimBot_Gun_AutoBolt"));
-        autoBoltToggle.Value = CerberusConfig.GunHelper.AutoBolt;
-        autoBoltToggle.ValueChanged += v => CerberusConfig.GunHelper.AutoBolt = v;
+        var autoBoltToggle = new CheckBox
+        {
+            Text = LocalizationManager.GetString("AimBot_Gun_AutoBolt")
+        };
+        autoBoltToggle.Pressed = CerberusConfig.GunHelper.AutoBolt;
+        autoBoltToggle.OnToggled += args => CerberusConfig.GunHelper.AutoBolt = args.Pressed;
         container.AddChild(autoBoltToggle);
 
-        var autoReloadToggle = new ToggleControl(LocalizationManager.GetString("AimBot_Gun_AutoReload"));
-        autoReloadToggle.Value = CerberusConfig.GunHelper.AutoReload;
-        autoReloadToggle.ValueChanged += v => CerberusConfig.GunHelper.AutoReload = v;
+        var autoReloadToggle = new CheckBox
+        {
+            Text = LocalizationManager.GetString("AimBot_Gun_AutoReload")
+        };
+        autoReloadToggle.Pressed = CerberusConfig.GunHelper.AutoReload;
+        autoReloadToggle.OnToggled += args => CerberusConfig.GunHelper.AutoReload = args.Pressed;
         container.AddChild(autoReloadToggle);
 
-        var autoReloadDelaySlider = new SliderControl(LocalizationManager.GetString("AimBot_Gun_AutoReloadDelay"), 0.01f, 0.5f, CerberusConfig.GunHelper.AutoReloadDelay);
-        autoReloadDelaySlider.ValueChanged += v => CerberusConfig.GunHelper.AutoReloadDelay = v;
+        var autoReloadDelaySliderLabel = new Label
+        {
+            Text = LocalizationManager.GetString("AimBot_Gun_AutoReloadDelay")
+        };
+        container.AddChild(autoReloadDelaySliderLabel);
+        var autoReloadDelaySlider = new Slider
+        {
+            MinValue = 0.01f,
+            MaxValue = 0.5f,
+            Value = CerberusConfig.GunHelper.AutoReloadDelay
+        };
+        autoReloadDelaySlider.OnValueChanged += _ => CerberusConfig.GunHelper.AutoReloadDelay = autoReloadDelaySlider.Value;
+
         container.AddChild(autoReloadDelaySlider);
 
         parent.AddChild(container);
@@ -923,9 +1007,12 @@ public sealed class MainMenuWindow : DefaultWindow
         };
         container.AddChild(title);
 
-        var enabledToggle = new ToggleControl(LocalizationManager.GetString("AimBot_Melee_Enabled"));
-        enabledToggle.Value = CerberusConfig.MeleeAimBot.Enabled;
-        enabledToggle.ValueChanged += v => CerberusConfig.MeleeAimBot.Enabled = v;
+        var enabledToggle = new CheckBox
+        {
+            Text = LocalizationManager.GetString("AimBot_Melee_Enabled")
+        };
+        enabledToggle.Pressed = CerberusConfig.MeleeAimBot.Enabled;
+        enabledToggle.OnToggled += args => CerberusConfig.MeleeAimBot.Enabled = args.Pressed;
         container.AddChild(enabledToggle);
 
         var meleeLightHotkey = new KeyBindInputControl(LocalizationManager.GetString("AimBot_Melee_LightHotKey"));
@@ -938,43 +1025,72 @@ public sealed class MainMenuWindow : DefaultWindow
         meleeHeavyHotkey.KeyBindChanged += v => CerberusConfig.MeleeAimBot.HeavyHotKey = v;
         container.AddChild(meleeHeavyHotkey);
 
-        var radiusSlider = new SliderControl(LocalizationManager.GetString("AimBot_Melee_Radius"), 0f, 10f, CerberusConfig.MeleeAimBot.CircleRadius);
-        radiusSlider.ValueChanged += v => CerberusConfig.MeleeAimBot.CircleRadius = v;
+        var radiusSliderLabel = new Label
+        {
+            Text = LocalizationManager.GetString("AimBot_Melee_Radius")
+        };
+        container.AddChild(radiusSliderLabel);
+        var radiusSlider = new Slider
+        {
+            MinValue = 0f,
+            MaxValue = 10f,
+            Value = CerberusConfig.MeleeAimBot.CircleRadius
+        };
+        radiusSlider.OnValueChanged += _ => CerberusConfig.MeleeAimBot.CircleRadius = radiusSlider.Value;
+
         container.AddChild(radiusSlider);
 
         var priorityCombo = new ComboControl(LocalizationManager.GetString("AimBot_Melee_Priority"), GetTargetPriorityNames());
-        priorityCombo.SelectedIndex = CerberusConfig.MeleeAimBot.TargetPriority;
-        priorityCombo.SelectedIndexChanged += i => CerberusConfig.MeleeAimBot.TargetPriority = i;
+        priorityCombo.SelectedIndex = (int)CerberusConfig.MeleeAimBot.TargetPriority;
+        priorityCombo.SelectedIndexChanged += index => CerberusConfig.MeleeAimBot.TargetPriority = index;
         container.AddChild(priorityCombo);
 
-        var onlyPriorityToggle = new ToggleControl(LocalizationManager.GetString("AimBot_OnlyPriority"));
-        onlyPriorityToggle.Value = CerberusConfig.MeleeAimBot.OnlyPriority;
-        onlyPriorityToggle.ValueChanged += v => CerberusConfig.MeleeAimBot.OnlyPriority = v;
+        var onlyPriorityToggle = new CheckBox
+        {
+            Text = LocalizationManager.GetString("AimBot_OnlyPriority")
+        };
+        onlyPriorityToggle.Pressed = CerberusConfig.MeleeAimBot.OnlyPriority;
+        onlyPriorityToggle.OnToggled += args => CerberusConfig.MeleeAimBot.OnlyPriority = args.Pressed;
         container.AddChild(onlyPriorityToggle);
 
-        var criticalToggle = new ToggleControl(LocalizationManager.GetString("AimBot_Melee_Critical"));
-        criticalToggle.Value = CerberusConfig.MeleeAimBot.TargetCritical;
-        criticalToggle.ValueChanged += v => CerberusConfig.MeleeAimBot.TargetCritical = v;
+        var criticalToggle = new CheckBox
+        {
+            Text = LocalizationManager.GetString("AimBot_Melee_Critical")
+        };
+        criticalToggle.Pressed = CerberusConfig.MeleeAimBot.TargetCritical;
+        criticalToggle.OnToggled += args => CerberusConfig.MeleeAimBot.TargetCritical = args.Pressed;
         container.AddChild(criticalToggle);
 
-        var fixNetworkDelayToggle = new ToggleControl(LocalizationManager.GetString("AimBot_Melee_FixNetworkDelay"));
-        fixNetworkDelayToggle.Value = CerberusConfig.MeleeAimBot.FixNetworkDelay;
-        fixNetworkDelayToggle.ValueChanged += v => 
+        var fixNetworkDelayToggle = new CheckBox
         {
-            CerberusConfig.MeleeAimBot.FixNetworkDelay = v;
+            Text = LocalizationManager.GetString("AimBot_Melee_FixNetworkDelay")
+        };
+        fixNetworkDelayToggle.Pressed = CerberusConfig.MeleeAimBot.FixNetworkDelay;
+        fixNetworkDelayToggle.OnToggled += args => 
+        {
+            CerberusConfig.MeleeAimBot.FixNetworkDelay = args.Pressed;
             UpdateMeleeFixDelayVisibility();
         };
         container.AddChild(fixNetworkDelayToggle);
 
-        var fixDelaySlider = new SliderControl(LocalizationManager.GetString("AimBot_Melee_FixDelay"), 0.1f, 2f, CerberusConfig.MeleeAimBot.FixDelay);
+        var fixDelaySliderLabel = new Label
+        {
+            Text = LocalizationManager.GetString("AimBot_Melee_FixDelay")
+        };
+        container.AddChild(fixDelaySliderLabel);
+        var fixDelaySlider = new SliderControl("", 0.1f, 2f, CerberusConfig.MeleeAimBot.FixDelay);
         fixDelaySlider.ValueChanged += v => CerberusConfig.MeleeAimBot.FixDelay = v;
+
         fixDelaySlider.Visible = CerberusConfig.MeleeAimBot.FixNetworkDelay;
         _meleeFixDelaySlider = fixDelaySlider;
         container.AddChild(fixDelaySlider);
 
-        var rotateToTargetToggle = new ToggleControl(LocalizationManager.GetString("AimBot_Melee_RotateToTarget"));
-        rotateToTargetToggle.Value = CerberusConfig.MeleeHelper.RotateToTarget;
-        rotateToTargetToggle.ValueChanged += v => CerberusConfig.MeleeHelper.RotateToTarget = v;
+        var rotateToTargetToggle = new CheckBox
+        {
+            Text = LocalizationManager.GetString("AimBot_Melee_RotateToTarget")
+        };
+        rotateToTargetToggle.Pressed = CerberusConfig.MeleeHelper.RotateToTarget;
+        rotateToTargetToggle.OnToggled += args => CerberusConfig.MeleeHelper.RotateToTarget = args.Pressed;
         container.AddChild(rotateToTargetToggle);
 
         parent.AddChild(container);
@@ -997,14 +1113,20 @@ public sealed class MainMenuWindow : DefaultWindow
         };
         container.AddChild(title);
 
-        var circleToggle = new ToggleControl(LocalizationManager.GetString("AimBot_Melee_Circle"));
-        circleToggle.Value = CerberusConfig.MeleeAimBot.ShowCircle;
-        circleToggle.ValueChanged += v => CerberusConfig.MeleeAimBot.ShowCircle = v;
+        var circleToggle = new CheckBox
+        {
+            Text = LocalizationManager.GetString("AimBot_Melee_Circle")
+        };
+        circleToggle.Pressed = CerberusConfig.MeleeAimBot.ShowCircle;
+        circleToggle.OnToggled += args => CerberusConfig.MeleeAimBot.ShowCircle = args.Pressed;
         container.AddChild(circleToggle);
 
-        var lineToggle = new ToggleControl(LocalizationManager.GetString("AimBot_Melee_Line"));
-        lineToggle.Value = CerberusConfig.MeleeAimBot.ShowLine;
-        lineToggle.ValueChanged += v => CerberusConfig.MeleeAimBot.ShowLine = v;
+        var lineToggle = new CheckBox
+        {
+            Text = LocalizationManager.GetString("AimBot_Melee_Line")
+        };
+        lineToggle.Pressed = CerberusConfig.MeleeAimBot.ShowLine;
+        lineToggle.OnToggled += args => CerberusConfig.MeleeAimBot.ShowLine = args.Pressed;
         container.AddChild(lineToggle);
 
         var colorPicker = new ColorPickerControl(LocalizationManager.GetString("AimBot_Melee_Color"));
@@ -1032,19 +1154,28 @@ public sealed class MainMenuWindow : DefaultWindow
         };
         container.AddChild(title);
 
-        var enabledHelperToggle = new ToggleControl(LocalizationManager.GetString("AimBot_Melee_EnabledHelper"));
-        enabledHelperToggle.Value = CerberusConfig.MeleeHelper.Enabled;
-        enabledHelperToggle.ValueChanged += v => CerberusConfig.MeleeHelper.Enabled = v;
+        var enabledHelperToggle = new CheckBox
+        {
+            Text = LocalizationManager.GetString("AimBot_Melee_EnabledHelper")
+        };
+        enabledHelperToggle.Pressed = CerberusConfig.MeleeHelper.Enabled;
+        enabledHelperToggle.OnToggled += args => CerberusConfig.MeleeHelper.Enabled = args.Pressed;
         container.AddChild(enabledHelperToggle);
 
-        var attack360Toggle = new ToggleControl(LocalizationManager.GetString("AimBot_Melee_Attack360"));
-        attack360Toggle.Value = CerberusConfig.MeleeHelper.Attack360;
-        attack360Toggle.ValueChanged += v => CerberusConfig.MeleeHelper.Attack360 = v;
+        var attack360Toggle = new CheckBox
+        {
+            Text = LocalizationManager.GetString("AimBot_Melee_Attack360")
+        };
+        attack360Toggle.Pressed = CerberusConfig.MeleeHelper.Attack360;
+        attack360Toggle.OnToggled += args => CerberusConfig.MeleeHelper.Attack360 = args.Pressed;
         container.AddChild(attack360Toggle);
 
-        var autoAttackToggle = new ToggleControl(LocalizationManager.GetString("AimBot_Melee_AutoAttack"));
-        autoAttackToggle.Value = CerberusConfig.MeleeHelper.AutoAttack;
-        autoAttackToggle.ValueChanged += v => CerberusConfig.MeleeHelper.AutoAttack = v;
+        var autoAttackToggle = new CheckBox
+        {
+            Text = LocalizationManager.GetString("AimBot_Melee_AutoAttack")
+        };
+        autoAttackToggle.Pressed = CerberusConfig.MeleeHelper.AutoAttack;
+        autoAttackToggle.OnToggled += args => CerberusConfig.MeleeHelper.AutoAttack = args.Pressed;
         container.AddChild(autoAttackToggle);
 
         parent.AddChild(container);
@@ -1067,59 +1198,92 @@ public sealed class MainMenuWindow : DefaultWindow
         };
         container.AddChild(title);
 
-        var enabledToggle = new ToggleControl(LocalizationManager.GetString("Visuals_ESP_Enabled"));
-        enabledToggle.Value = CerberusConfig.Esp.Enabled;
-        enabledToggle.ValueChanged += v => CerberusConfig.Esp.Enabled = v;
+        var enabledToggle = new CheckBox
+        {
+            Text = LocalizationManager.GetString("Visuals_ESP_Enabled")
+        };
+        enabledToggle.Pressed = CerberusConfig.Esp.Enabled;
+        enabledToggle.OnToggled += args => CerberusConfig.Esp.Enabled = args.Pressed;
         container.AddChild(enabledToggle);
 
-        var showNameToggle = new ToggleControl(LocalizationManager.GetString("Visuals_ESP_Name"));
-        showNameToggle.Value = CerberusConfig.Esp.ShowName;
-        showNameToggle.ValueChanged += v => CerberusConfig.Esp.ShowName = v;
+        var showNameToggle = new CheckBox
+        {
+            Text = LocalizationManager.GetString("Visuals_ESP_Name")
+        };
+        showNameToggle.Pressed = CerberusConfig.Esp.ShowName;
+        showNameToggle.OnToggled += args => CerberusConfig.Esp.ShowName = args.Pressed;
         container.AddChild(showNameToggle);
 
-        var showCKeyToggle = new ToggleControl(LocalizationManager.GetString("Visuals_ESP_CKey"));
-        showCKeyToggle.Value = CerberusConfig.Esp.ShowCKey;
-        showCKeyToggle.ValueChanged += v => CerberusConfig.Esp.ShowCKey = v;
+        var showCKeyToggle = new CheckBox
+        {
+            Text = LocalizationManager.GetString("Visuals_ESP_CKey")
+        };
+        showCKeyToggle.Pressed = CerberusConfig.Esp.ShowCKey;
+        showCKeyToggle.OnToggled += args => CerberusConfig.Esp.ShowCKey = args.Pressed;
         container.AddChild(showCKeyToggle);
 
-        var showAntagToggle = new ToggleControl(LocalizationManager.GetString("Visuals_ESP_Antag"));
-        showAntagToggle.Value = CerberusConfig.Esp.ShowAntag;
-        showAntagToggle.ValueChanged += v => CerberusConfig.Esp.ShowAntag = v;
+        var showAntagToggle = new CheckBox
+        {
+            Text = LocalizationManager.GetString("Visuals_ESP_Antag")
+        };
+        showAntagToggle.Pressed = CerberusConfig.Esp.ShowAntag;
+        showAntagToggle.OnToggled += args => CerberusConfig.Esp.ShowAntag = args.Pressed;
         container.AddChild(showAntagToggle);
 
-        var showFriendToggle = new ToggleControl(LocalizationManager.GetString("Visuals_ESP_Friend"));
-        showFriendToggle.Value = CerberusConfig.Esp.ShowFriend;
-        showFriendToggle.ValueChanged += v => CerberusConfig.Esp.ShowFriend = v;
+        var showFriendToggle = new CheckBox
+        {
+            Text = LocalizationManager.GetString("Visuals_ESP_Friend")
+        };
+        showFriendToggle.Pressed = CerberusConfig.Esp.ShowFriend;
+        showFriendToggle.OnToggled += args => CerberusConfig.Esp.ShowFriend = args.Pressed;
         container.AddChild(showFriendToggle);
 
-        var showPriorityToggle = new ToggleControl(LocalizationManager.GetString("Visuals_ESP_Priority"));
-        showPriorityToggle.Value = CerberusConfig.Esp.ShowPriority;
-        showPriorityToggle.ValueChanged += v => CerberusConfig.Esp.ShowPriority = v;
+        var showPriorityToggle = new CheckBox
+        {
+            Text = LocalizationManager.GetString("Visuals_ESP_Priority")
+        };
+        showPriorityToggle.Pressed = CerberusConfig.Esp.ShowPriority;
+        showPriorityToggle.OnToggled += args => CerberusConfig.Esp.ShowPriority = args.Pressed;
         container.AddChild(showPriorityToggle);
 
-        var showCombatModeToggle = new ToggleControl(LocalizationManager.GetString("Visuals_ESP_CombatMode"));
-        showCombatModeToggle.Value = CerberusConfig.Esp.ShowCombatMode;
-        showCombatModeToggle.ValueChanged += v => CerberusConfig.Esp.ShowCombatMode = v;
+        var showCombatModeToggle = new CheckBox
+        {
+            Text = LocalizationManager.GetString("Visuals_ESP_CombatMode")
+        };
+        showCombatModeToggle.Pressed = CerberusConfig.Esp.ShowCombatMode;
+        showCombatModeToggle.OnToggled += args => CerberusConfig.Esp.ShowCombatMode = args.Pressed;
         container.AddChild(showCombatModeToggle);
 
-        var showImplantsToggle = new ToggleControl(LocalizationManager.GetString("Visuals_ESP_Implants"));
-        showImplantsToggle.Value = CerberusConfig.Esp.ShowImplants;
-        showImplantsToggle.ValueChanged += v => CerberusConfig.Esp.ShowImplants = v;
+        var showImplantsToggle = new CheckBox
+        {
+            Text = LocalizationManager.GetString("Visuals_ESP_Implants")
+        };
+        showImplantsToggle.Pressed = CerberusConfig.Esp.ShowImplants;
+        showImplantsToggle.OnToggled += args => CerberusConfig.Esp.ShowImplants = args.Pressed;
         container.AddChild(showImplantsToggle);
 
-        var showContrabandToggle = new ToggleControl(LocalizationManager.GetString("Visuals_ESP_Contraband"));
-        showContrabandToggle.Value = CerberusConfig.Esp.ShowContraband;
-        showContrabandToggle.ValueChanged += v => CerberusConfig.Esp.ShowContraband = v;
+        var showContrabandToggle = new CheckBox
+        {
+            Text = LocalizationManager.GetString("Visuals_ESP_Contraband")
+        };
+        showContrabandToggle.Pressed = CerberusConfig.Esp.ShowContraband;
+        showContrabandToggle.OnToggled += args => CerberusConfig.Esp.ShowContraband = args.Pressed;
         container.AddChild(showContrabandToggle);
 
-        var showWeaponToggle = new ToggleControl(LocalizationManager.GetString("ESP_Weapon"));
-        showWeaponToggle.Value = CerberusConfig.Esp.ShowWeapon;
-        showWeaponToggle.ValueChanged += v => CerberusConfig.Esp.ShowWeapon = v;
+        var showWeaponToggle = new CheckBox
+        {
+            Text = LocalizationManager.GetString("ESP_Weapon")
+        };
+        showWeaponToggle.Pressed = CerberusConfig.Esp.ShowWeapon;
+        showWeaponToggle.OnToggled += args => CerberusConfig.Esp.ShowWeapon = args.Pressed;
         container.AddChild(showWeaponToggle);
 
-        var showNoSlipToggle = new ToggleControl(LocalizationManager.GetString("ESP_NoSlip"));
-        showNoSlipToggle.Value = CerberusConfig.Esp.ShowNoSlip;
-        showNoSlipToggle.ValueChanged += v => CerberusConfig.Esp.ShowNoSlip = v;
+        var showNoSlipToggle = new CheckBox
+        {
+            Text = LocalizationManager.GetString("ESP_NoSlip")
+        };
+        showNoSlipToggle.Pressed = CerberusConfig.Esp.ShowNoSlip;
+        showNoSlipToggle.OnToggled += args => CerberusConfig.Esp.ShowNoSlip = args.Pressed;
         container.AddChild(showNoSlipToggle);
 
         parent.AddChild(container);
@@ -1142,9 +1306,12 @@ public sealed class MainMenuWindow : DefaultWindow
         };
         container.AddChild(title);
 
-        var fovToggle = new ToggleControl(LocalizationManager.GetString("Visuals_Eye_FOV"));
-        fovToggle.Value = CerberusConfig.Eye.FovEnabled;
-        fovToggle.ValueChanged += v => CerberusConfig.Eye.FovEnabled = v;
+        var fovToggle = new CheckBox
+        {
+            Text = LocalizationManager.GetString("Visuals_Eye_FOV")
+        };
+        fovToggle.Pressed = CerberusConfig.Eye.FovEnabled;
+        fovToggle.OnToggled += args => CerberusConfig.Eye.FovEnabled = args.Pressed;
         container.AddChild(fovToggle);
 
         var fovHotkey = new KeyBindInputControl(LocalizationManager.GetString("Visuals_Eye_FOV_HotKey"));
@@ -1152,9 +1319,12 @@ public sealed class MainMenuWindow : DefaultWindow
         fovHotkey.KeyBindChanged += v => CerberusConfig.Eye.FovHotKey = v;
         container.AddChild(fovHotkey);
 
-        var fullBrightToggle = new ToggleControl(LocalizationManager.GetString("Visuals_Eye_FullBright"));
-        fullBrightToggle.Value = CerberusConfig.Eye.FullBrightEnabled;
-        fullBrightToggle.ValueChanged += v => CerberusConfig.Eye.FullBrightEnabled = v;
+        var fullBrightToggle = new CheckBox
+        {
+            Text = LocalizationManager.GetString("Visuals_Eye_FullBright")
+        };
+        fullBrightToggle.Pressed = CerberusConfig.Eye.FullBrightEnabled;
+        fullBrightToggle.OnToggled += args => CerberusConfig.Eye.FullBrightEnabled = args.Pressed;
         container.AddChild(fullBrightToggle);
 
         var fullBrightHotkey = new KeyBindInputControl(LocalizationManager.GetString("Visuals_Eye_FullBright_HotKey"));
@@ -1162,8 +1332,19 @@ public sealed class MainMenuWindow : DefaultWindow
         fullBrightHotkey.KeyBindChanged += v => CerberusConfig.Eye.FullBrightHotKey = v;
         container.AddChild(fullBrightHotkey);
 
-        var zoomSlider = new SliderControl(LocalizationManager.GetString("Visuals_Eye_Zoom"), 0.5f, 30f, CerberusConfig.Eye.Zoom);
-        zoomSlider.ValueChanged += v => CerberusConfig.Eye.Zoom = v;
+        var zoomSliderLabel = new Label
+        {
+            Text = LocalizationManager.GetString("Visuals_Eye_Zoom")
+        };
+        container.AddChild(zoomSliderLabel);
+        var zoomSlider = new Slider
+        {
+            MinValue = 0.5f,
+            MaxValue = 30f,
+            Value = CerberusConfig.Eye.Zoom
+        };
+        zoomSlider.OnValueChanged += _ => CerberusConfig.Eye.Zoom = zoomSlider.Value;
+
         container.AddChild(zoomSlider);
 
         var zoomUpHotkey = new KeyBindInputControl(LocalizationManager.GetString("Visuals_Eye_ZoomUp_HotKey"));
@@ -1196,9 +1377,12 @@ public sealed class MainMenuWindow : DefaultWindow
         };
         container.AddChild(storageViewerTitle);
 
-        var storageViewerToggle = new ToggleControl(LocalizationManager.GetString("Visuals_Eye_StorageViewer_Enabled"));
-        storageViewerToggle.Value = CerberusConfig.StorageViewer.Enabled;
-        storageViewerToggle.ValueChanged += v => CerberusConfig.StorageViewer.Enabled = v;
+        var storageViewerToggle = new CheckBox
+        {
+            Text = LocalizationManager.GetString("Visuals_Eye_StorageViewer_Enabled")
+        };
+        storageViewerToggle.Pressed = CerberusConfig.StorageViewer.Enabled;
+        storageViewerToggle.OnToggled += args => CerberusConfig.StorageViewer.Enabled = args.Pressed;
         container.AddChild(storageViewerToggle);
 
         var storageViewerHotkey = new KeyBindInputControl(LocalizationManager.GetString("Visuals_Eye_StorageViewer_HotKey"));
@@ -1231,33 +1415,59 @@ public sealed class MainMenuWindow : DefaultWindow
         };
         container.AddChild(title);
 
-        var enabledToggle = new ToggleControl(LocalizationManager.GetString("Visuals_Fun_Enabled"));
-        enabledToggle.Value = CerberusConfig.Fun.Enabled;
-        enabledToggle.ValueChanged += v => CerberusConfig.Fun.Enabled = v;
+        var enabledToggle = new CheckBox
+        {
+            Text = LocalizationManager.GetString("Visuals_Fun_Enabled")
+        };
+        enabledToggle.Pressed = CerberusConfig.Fun.Enabled;
+        enabledToggle.OnToggled += args => CerberusConfig.Fun.Enabled = args.Pressed;
         container.AddChild(enabledToggle);
 
-        var rotationToggle = new ToggleControl(LocalizationManager.GetString("Visuals_Fun_Rotation"));
-        rotationToggle.Value = CerberusConfig.Fun.RotationEnabled;
-        rotationToggle.ValueChanged += v => CerberusConfig.Fun.RotationEnabled = v;
+        var rotationToggle = new CheckBox
+        {
+            Text = LocalizationManager.GetString("Visuals_Fun_Rotation")
+        };
+        rotationToggle.Pressed = CerberusConfig.Fun.RotationEnabled;
+        rotationToggle.OnToggled += args => CerberusConfig.Fun.RotationEnabled = args.Pressed;
         container.AddChild(rotationToggle);
 
-        var rotationSpeedSlider = new SliderControl(LocalizationManager.GetString("Visuals_Fun_Speed"), 0f, 360f, CerberusConfig.Fun.RotationSpeed);
-        rotationSpeedSlider.ValueChanged += v => CerberusConfig.Fun.RotationSpeed = v;
+        var rotationSpeedSliderLabel = new Label
+        {
+            Text = LocalizationManager.GetString("Visuals_Fun_Speed")
+        };
+        container.AddChild(rotationSpeedSliderLabel);
+        var rotationSpeedSlider = new Slider
+        {
+            MinValue = 0f,
+            MaxValue = 360f,
+            Value = CerberusConfig.Fun.RotationSpeed
+        };
+        rotationSpeedSlider.OnValueChanged += _ => CerberusConfig.Fun.RotationSpeed = rotationSpeedSlider.Value;
+
         container.AddChild(rotationSpeedSlider);
 
-        var jumpToggle = new ToggleControl(LocalizationManager.GetString("Visuals_Fun_Jump"));
-        jumpToggle.Value = CerberusConfig.Fun.JumpEnabled;
-        jumpToggle.ValueChanged += v => CerberusConfig.Fun.JumpEnabled = v;
+        var jumpToggle = new CheckBox
+        {
+            Text = LocalizationManager.GetString("Visuals_Fun_Jump")
+        };
+        jumpToggle.Pressed = CerberusConfig.Fun.JumpEnabled;
+        jumpToggle.OnToggled += args => CerberusConfig.Fun.JumpEnabled = args.Pressed;
         container.AddChild(jumpToggle);
 
-        var shakeToggle = new ToggleControl(LocalizationManager.GetString("Visuals_Fun_Snake"));
-        shakeToggle.Value = CerberusConfig.Fun.ShakeEnabled;
-        shakeToggle.ValueChanged += v => CerberusConfig.Fun.ShakeEnabled = v;
+        var shakeToggle = new CheckBox
+        {
+            Text = LocalizationManager.GetString("Visuals_Fun_Snake")
+        };
+        shakeToggle.Pressed = CerberusConfig.Fun.ShakeEnabled;
+        shakeToggle.OnToggled += args => CerberusConfig.Fun.ShakeEnabled = args.Pressed;
         container.AddChild(shakeToggle);
 
-        var rainbowToggle = new ToggleControl(LocalizationManager.GetString("Visuals_Fun_Rainbow"));
-        rainbowToggle.Value = CerberusConfig.Fun.RainbowEnabled;
-        rainbowToggle.ValueChanged += v => CerberusConfig.Fun.RainbowEnabled = v;
+        var rainbowToggle = new CheckBox
+        {
+            Text = LocalizationManager.GetString("Visuals_Fun_Rainbow")
+        };
+        rainbowToggle.Pressed = CerberusConfig.Fun.RainbowEnabled;
+        rainbowToggle.OnToggled += args => CerberusConfig.Fun.RainbowEnabled = args.Pressed;
         container.AddChild(rainbowToggle);
 
         var colorPicker = new ColorPickerControl(LocalizationManager.GetString("Visuals_Fun_Color"));
@@ -1295,9 +1505,9 @@ public sealed class MainMenuWindow : DefaultWindow
 
         var sortCombo = new ComboControl("", _sortOptions.Select(LocalizationManager.GetString).ToArray());
         sortCombo.SelectedIndex = _selectedSort;
-        sortCombo.SelectedIndexChanged += i => 
+        sortCombo.SelectedIndexChanged += index => 
         {
-            _selectedSort = i;
+            _selectedSort = index;
             RenderGeneralTab();
         };
         searchBox.AddChild(sortCombo);
@@ -1481,43 +1691,75 @@ public sealed class MainMenuWindow : DefaultWindow
             Margin = new Thickness(10)
         };
 
-        var antiSoapToggle = new ToggleControl(LocalizationManager.GetString("Misc_General_AntiSoap"));
-        antiSoapToggle.Value = CerberusConfig.Misc.AntiSoapEnabled;
-        antiSoapToggle.ValueChanged += v => CerberusConfig.Misc.AntiSoapEnabled = v;
+        var antiSoapToggle = new CheckBox
+        {
+            Text = LocalizationManager.GetString("Misc_General_AntiSoap")
+        };
+        antiSoapToggle.Pressed = CerberusConfig.Misc.AntiSoapEnabled;
+        antiSoapToggle.OnToggled += args => CerberusConfig.Misc.AntiSoapEnabled = args.Pressed;
         container.AddChild(antiSoapToggle);
 
-        var antiAfkToggle = new ToggleControl(LocalizationManager.GetString("Misc_General_AntiAFK"));
-        antiAfkToggle.Value = CerberusConfig.Misc.AntiAfkEnabled;
-        antiAfkToggle.ValueChanged += v => CerberusConfig.Misc.AntiAfkEnabled = v;
+        var antiAfkToggle = new CheckBox
+        {
+            Text = LocalizationManager.GetString("Misc_General_AntiAFK")
+        };
+        antiAfkToggle.Pressed = CerberusConfig.Misc.AntiAfkEnabled;
+        antiAfkToggle.OnToggled += args => CerberusConfig.Misc.AntiAfkEnabled = args.Pressed;
         container.AddChild(antiAfkToggle);
 
-        var showExplosionsToggle = new ToggleControl(LocalizationManager.GetString("Misc_General_ShowExplosions"));
-        showExplosionsToggle.Value = CerberusConfig.Misc.ShowExplosive;
-        showExplosionsToggle.ValueChanged += v => CerberusConfig.Misc.ShowExplosive = v;
+        var showExplosionsToggle = new CheckBox
+        {
+            Text = LocalizationManager.GetString("Misc_General_ShowExplosions")
+        };
+        showExplosionsToggle.Pressed = CerberusConfig.Misc.ShowExplosive;
+        showExplosionsToggle.OnToggled += args => CerberusConfig.Misc.ShowExplosive = args.Pressed;
         container.AddChild(showExplosionsToggle);
 
-        var showTrajectoryToggle = new ToggleControl(LocalizationManager.GetString("Misc_General_ShowTrajectory"));
-        showTrajectoryToggle.Value = CerberusConfig.Misc.ShowTrajectory;
-        showTrajectoryToggle.ValueChanged += v => CerberusConfig.Misc.ShowTrajectory = v;
+        var showTrajectoryToggle = new CheckBox
+        {
+            Text = LocalizationManager.GetString("Misc_General_ShowTrajectory")
+        };
+        showTrajectoryToggle.Pressed = CerberusConfig.Misc.ShowTrajectory;
+        showTrajectoryToggle.OnToggled += args => CerberusConfig.Misc.ShowTrajectory = args.Pressed;
         container.AddChild(showTrajectoryToggle);
 
-        var damageOverlayToggle = new ToggleControl(LocalizationManager.GetString("Misc_General_DamageOverlay"));
-        damageOverlayToggle.Value = CerberusConfig.Misc.DamageOverlayEnabled;
-        damageOverlayToggle.ValueChanged += v => CerberusConfig.Misc.DamageOverlayEnabled = v;
+        var damageOverlayToggle = new CheckBox
+        {
+            Text = LocalizationManager.GetString("Misc_General_DamageOverlay")
+        };
+        damageOverlayToggle.Pressed = CerberusConfig.Misc.DamageOverlayEnabled;
+        damageOverlayToggle.OnToggled += args => CerberusConfig.Misc.DamageOverlayEnabled = args.Pressed;
         container.AddChild(damageOverlayToggle);
 
-        var antiAimToggle = new ToggleControl(LocalizationManager.GetString("Misc_General_AntiAim"));
-        antiAimToggle.Value = CerberusConfig.Misc.AntiAimEnabled;
-        antiAimToggle.ValueChanged += v => CerberusConfig.Misc.AntiAimEnabled = v;
+        var antiAimToggle = new CheckBox
+        {
+            Text = LocalizationManager.GetString("Misc_General_AntiAim")
+        };
+        antiAimToggle.Pressed = CerberusConfig.Misc.AntiAimEnabled;
+        antiAimToggle.OnToggled += args => CerberusConfig.Misc.AntiAimEnabled = args.Pressed;
         container.AddChild(antiAimToggle);
 
-        var speedSlider = new SliderControl(LocalizationManager.GetString("Misc_General_Speed"), 180f, 3600f, CerberusConfig.Misc.AutoRotateSpeed);
-        speedSlider.ValueChanged += v => CerberusConfig.Misc.AutoRotateSpeed = v;
+        var speedSliderLabel = new Label
+        {
+            Text = LocalizationManager.GetString("Misc_General_Speed")
+        };
+        container.AddChild(speedSliderLabel);
+        var speedSlider = new Slider
+        {
+            MinValue = 180f,
+            MaxValue = 3600f,
+            Value = CerberusConfig.Misc.AutoRotateSpeed
+        };
+        speedSlider.OnValueChanged += _ => CerberusConfig.Misc.AutoRotateSpeed = speedSlider.Value;
+
         container.AddChild(speedSlider);
 
-        var trashTalkToggle = new ToggleControl(LocalizationManager.GetString("Misc_General_TrashTalk"));
-        trashTalkToggle.Value = CerberusConfig.Misc.TrashTalkEnabled;
-        trashTalkToggle.ValueChanged += v => CerberusConfig.Misc.TrashTalkEnabled = v;
+        var trashTalkToggle = new CheckBox
+        {
+            Text = LocalizationManager.GetString("Misc_General_TrashTalk")
+        };
+        trashTalkToggle.Pressed = CerberusConfig.Misc.TrashTalkEnabled;
+        trashTalkToggle.OnToggled += args => CerberusConfig.Misc.TrashTalkEnabled = args.Pressed;
         container.AddChild(trashTalkToggle);
 
         var openFolderButton = new Button
@@ -1552,20 +1794,39 @@ public sealed class MainMenuWindow : DefaultWindow
         };
         container.AddChild(title);
 
-        var protectWordToggle = new ToggleControl(LocalizationManager.GetString("Misc_Spammer_Settings_ProtectWord"));
-        protectWordToggle.Value = CerberusConfig.Spammer.ProtectTextEnabled;
-        protectWordToggle.ValueChanged += v => CerberusConfig.Spammer.ProtectTextEnabled = v;
+        var protectWordToggle = new CheckBox
+        {
+            Text = LocalizationManager.GetString("Misc_Spammer_Settings_ProtectWord")
+        };
+        protectWordToggle.Pressed = CerberusConfig.Spammer.ProtectTextEnabled;
+        protectWordToggle.OnToggled += args => CerberusConfig.Spammer.ProtectTextEnabled = args.Pressed;
         container.AddChild(protectWordToggle);
 
-        var randomLengthToggle = new ToggleControl(LocalizationManager.GetString("Misc_Spammer_Settings_RandomLength"));
-        randomLengthToggle.Value = CerberusConfig.Spammer.ProtectRandomLength;
-        randomLengthToggle.ValueChanged += v => CerberusConfig.Spammer.ProtectRandomLength = v;
+        var randomLengthToggle = new CheckBox
+        {
+            Text = LocalizationManager.GetString("Misc_Spammer_Settings_RandomLength")
+        };
+        randomLengthToggle.Pressed = CerberusConfig.Spammer.ProtectRandomLength;
+        randomLengthToggle.OnToggled += args => CerberusConfig.Spammer.ProtectRandomLength = args.Pressed;
         container.AddChild(randomLengthToggle);
 
-        var lengthSlider = new SliderControl(LocalizationManager.GetString("Misc_Spammer_Settings_Length"), 1, 12, CerberusConfig.Spammer.ProtectLength);
-        lengthSlider.ValueChanged += v => CerberusConfig.Spammer.ProtectLength = (int)v;
+        var lengthSliderLabel = new Label
+        {
+            Text = LocalizationManager.GetString("Misc_Spammer_Settings_Length")
+        };
+        container.AddChild(lengthSliderLabel);
+        var lengthSlider = new Slider
+        {
+            MinValue = 1,
+            MaxValue = 12,
+            Value = CerberusConfig.Spammer.ProtectLength
+        };
+        lengthSlider.OnValueChanged += _ => 
+        {
+            CerberusConfig.Spammer.ProtectLength = (int)lengthSlider.Value;
+        };
         lengthSlider.Visible = !CerberusConfig.Spammer.ProtectRandomLength;
-        randomLengthToggle.ValueChanged += v => lengthSlider.Visible = !v;
+        randomLengthToggle.OnToggled += args => lengthSlider.Visible = !args.Pressed;
         container.AddChild(lengthSlider);
 
         ChannelAddToggle(container, "Local", 1);
@@ -1583,11 +1844,14 @@ public sealed class MainMenuWindow : DefaultWindow
     private void ChannelAddToggle(Control parent, string label, int channel)
     {
         bool isEnabled = CerberusConfig.Spammer.Channels.Contains(channel);
-        var toggle = new ToggleControl(label);
-        toggle.Value = isEnabled;
-        toggle.ValueChanged += v =>
+        var toggle = new CheckBox
         {
-            if (v)
+            Text = label
+        };
+        toggle.Pressed = isEnabled;
+        toggle.OnToggled += args =>
+        {
+            if (args.Pressed)
             {
                 if (!CerberusConfig.Spammer.Channels.Contains(channel))
                 {
@@ -1619,9 +1883,12 @@ public sealed class MainMenuWindow : DefaultWindow
         };
         container.AddChild(title);
 
-        var showMenuToggle = new ToggleControl(LocalizationManager.GetString("Settings_ShowMenu"));
-        showMenuToggle.Value = CerberusConfig.Settings.ShowMenu;
-        showMenuToggle.ValueChanged += v => CerberusConfig.Settings.ShowMenu = v;
+        var showMenuToggle = new CheckBox
+        {
+            Text = LocalizationManager.GetString("Settings_ShowMenu")
+        };
+        showMenuToggle.Pressed = CerberusConfig.Settings.ShowMenu;
+        showMenuToggle.OnToggled += args => CerberusConfig.Settings.ShowMenu = args.Pressed;
         container.AddChild(showMenuToggle);
 
         var showMenuHotkey = new KeyBindInputControl(LocalizationManager.GetString("Settings_ShowMenuHotKey"));
@@ -1629,9 +1896,12 @@ public sealed class MainMenuWindow : DefaultWindow
         showMenuHotkey.KeyBindChanged += v => CerberusConfig.Settings.ShowMenuHotKey = v;
         container.AddChild(showMenuHotkey);
 
-        var uiCustomizableToggle = new ToggleControl(LocalizationManager.GetString("Settings_UICustomizable"));
-        uiCustomizableToggle.Value = CerberusConfig.Settings.UiCustomizable;
-        uiCustomizableToggle.ValueChanged += v => CerberusConfig.Settings.UiCustomizable = v;
+        var uiCustomizableToggle = new CheckBox
+        {
+            Text = LocalizationManager.GetString("Settings_UICustomizable")
+        };
+        uiCustomizableToggle.Pressed = CerberusConfig.Settings.UiCustomizable;
+        uiCustomizableToggle.OnToggled += args => CerberusConfig.Settings.UiCustomizable = args.Pressed;
         container.AddChild(uiCustomizableToggle);
 
         var languageButton = new Button
@@ -1931,8 +2201,18 @@ public sealed class MainMenuWindow : DefaultWindow
         };
         container.AddChild(title);
 
-        var fontIntervalSlider = new SliderControl(LocalizationManager.GetString("Visuals_ESP_Font_Interval"), 1, 50, CerberusConfig.Esp.FontInterval);
-        fontIntervalSlider.ValueChanged += v => CerberusConfig.Esp.FontInterval = (int)v;
+        var fontIntervalSliderLabel = new Label
+        {
+            Text = LocalizationManager.GetString("Visuals_ESP_Font_Interval")
+        };
+        container.AddChild(fontIntervalSliderLabel);
+        var fontIntervalSlider = new Slider
+        {
+            MinValue = 1,
+            MaxValue = 50,
+            Value = CerberusConfig.Esp.FontInterval
+        };
+        fontIntervalSlider.OnValueChanged += _ => CerberusConfig.Esp.FontInterval = (int)fontIntervalSlider.Value;
         container.AddChild(fontIntervalSlider);
 
         var fonts = new[]
@@ -1943,30 +2223,76 @@ public sealed class MainMenuWindow : DefaultWindow
             "NotoSans Italic"
         };
 
-        var mainFontCombo = new ComboControl(LocalizationManager.GetString("Visuals_ESP_Font_MainFont"), fonts);
-        mainFontCombo.SelectedIndex = CerberusConfig.Esp.MainFontIndex;
-        mainFontCombo.SelectedIndexChanged += i =>
+        var mainFontComboLabel = new Label
         {
-            CerberusConfig.Esp.MainFontIndex = i;
-            CerberusConfig.Esp.MainFontPath = i < fonts.Length ? $"/Fonts/{fonts[i]}/{fonts[i]}.ttf" : "/Fonts/Boxfont-round/Boxfont Round.ttf";
+            Text = LocalizationManager.GetString("Visuals_ESP_Font_MainFont")
+        };
+        container.AddChild(mainFontComboLabel);
+        var mainFontCombo = new OptionButton
+        {
+            Prefix = LocalizationManager.GetString("Visuals_ESP_Font_MainFont") + ": "
+        };
+        var mainFontComboItems = fonts;
+        for (int i = 0; i < mainFontComboItems.Length; i++)
+        {
+            mainFontCombo.AddItem(mainFontComboItems[i], i);
+        }
+        mainFontCombo.Select((int)CerberusConfig.Esp.MainFontIndex);
+        mainFontCombo.OnItemSelected += args =>
+        {
+            CerberusConfig.Esp.MainFontIndex = args.Id;
+            CerberusConfig.Esp.MainFontPath = args.Id < fonts.Length ? $"/Fonts/{fonts[args.Id]}/{fonts[args.Id]}.ttf" : "/Fonts/Boxfont-round/Boxfont Round.ttf";
         };
         container.AddChild(mainFontCombo);
 
-        var mainFontSizeSlider = new SliderControl(LocalizationManager.GetString("Visuals_ESP_Font_Size"), 6, 30, CerberusConfig.Esp.MainFontSize);
-        mainFontSizeSlider.ValueChanged += v => CerberusConfig.Esp.MainFontSize = (int)v;
+        var mainFontSizeSliderLabel = new Label
+        {
+            Text = LocalizationManager.GetString("Visuals_ESP_Font_Size")
+        };
+        container.AddChild(mainFontSizeSliderLabel);
+        var mainFontSizeSlider = new Slider
+        {
+            MinValue = 6,
+            MaxValue = 30,
+            Value = CerberusConfig.Esp.MainFontSize
+        };
+        mainFontSizeSlider.OnValueChanged += _ => CerberusConfig.Esp.MainFontSize = (int)mainFontSizeSlider.Value;
         container.AddChild(mainFontSizeSlider);
 
-        var otherFontCombo = new ComboControl(LocalizationManager.GetString("Visuals_ESP_Font_OtherFont"), fonts);
-        otherFontCombo.SelectedIndex = CerberusConfig.Esp.OtherFontIndex;
-        otherFontCombo.SelectedIndexChanged += i =>
+        var otherFontComboLabel = new Label
         {
-            CerberusConfig.Esp.OtherFontIndex = i;
-            CerberusConfig.Esp.OtherFontPath = i < fonts.Length ? $"/Fonts/{fonts[i]}/{fonts[i]}.ttf" : "/Fonts/Boxfont-round/Boxfont Round.ttf";
+            Text = LocalizationManager.GetString("Visuals_ESP_Font_OtherFont")
+        };
+        container.AddChild(otherFontComboLabel);
+        var otherFontCombo = new OptionButton
+        {
+            Prefix = LocalizationManager.GetString("Visuals_ESP_Font_OtherFont") + ": "
+        };
+        var otherFontComboItems = fonts;
+        for (int i = 0; i < otherFontComboItems.Length; i++)
+        {
+            otherFontCombo.AddItem(otherFontComboItems[i], i);
+        }
+        otherFontCombo.Select((int)CerberusConfig.Esp.OtherFontIndex);
+        otherFontCombo.OnItemSelected += args =>
+        {
+            CerberusConfig.Esp.OtherFontIndex = args.Id;
+            CerberusConfig.Esp.OtherFontPath = args.Id < fonts.Length ? $"/Fonts/{fonts[args.Id]}/{fonts[args.Id]}.ttf" : "/Fonts/Boxfont-round/Boxfont Round.ttf";
         };
         container.AddChild(otherFontCombo);
 
-        var otherFontSizeSlider = new SliderControl(LocalizationManager.GetString("Visuals_ESP_Font_Size_Other"), 6, 30, CerberusConfig.Esp.OtherFontSize);
-        otherFontSizeSlider.ValueChanged += v => CerberusConfig.Esp.OtherFontSize = (int)v;
+        var otherFontSizeSliderLabel = new Label
+        {
+            Text = LocalizationManager.GetString("Visuals_ESP_Font_Size_Other")
+        };
+        container.AddChild(otherFontSizeSliderLabel);
+        var otherFontSizeSlider = new Slider
+        {
+            MinValue = 6,
+            MaxValue = 30,
+            Value = CerberusConfig.Esp.OtherFontSize
+        };
+        otherFontSizeSlider.OnValueChanged += _ => CerberusConfig.Esp.OtherFontSize = (int)otherFontSizeSlider.Value;
         container.AddChild(otherFontSizeSlider);
 
         parent.AddChild(container);
@@ -1989,14 +2315,20 @@ public sealed class MainMenuWindow : DefaultWindow
         };
         container.AddChild(title);
 
-        var showHealthToggle = new ToggleControl(LocalizationManager.GetString("Visuals_Eye_HUD_Health"));
-        showHealthToggle.Value = CerberusConfig.Hud.ShowHealth;
-        showHealthToggle.ValueChanged += v => CerberusConfig.Hud.ShowHealth = v;
+        var showHealthToggle = new CheckBox
+        {
+            Text = LocalizationManager.GetString("Visuals_Eye_HUD_Health")
+        };
+        showHealthToggle.Pressed = CerberusConfig.Hud.ShowHealth;
+        showHealthToggle.OnToggled += args => CerberusConfig.Hud.ShowHealth = args.Pressed;
         container.AddChild(showHealthToggle);
 
-        var showStaminaToggle = new ToggleControl(LocalizationManager.GetString("Visuals_Eye_HUD_Stamina"));
-        showStaminaToggle.Value = CerberusConfig.Hud.ShowStamina;
-        showStaminaToggle.ValueChanged += v => CerberusConfig.Hud.ShowStamina = v;
+        var showStaminaToggle = new CheckBox
+        {
+            Text = LocalizationManager.GetString("Visuals_Eye_HUD_Stamina")
+        };
+        showStaminaToggle.Pressed = CerberusConfig.Hud.ShowStamina;
+        showStaminaToggle.OnToggled += args => CerberusConfig.Hud.ShowStamina = args.Pressed;
         container.AddChild(showStaminaToggle);
 
         var staminaColor = new ColorPickerControl(LocalizationManager.GetString("Visuals_Eye_HUD_Color"));
@@ -2004,13 +2336,13 @@ public sealed class MainMenuWindow : DefaultWindow
         staminaColor.ColorChanged += v => CerberusConfig.Hud.StaminaColor = v;
         container.AddChild(staminaColor);
 
-        HudIconToggle(container, LocalizationManager.GetString("Visuals_Eye_HUD_AntagIcons"), ref CerberusConfig.Hud.ShowAntag, "ShowAntagIcons");
-        HudIconToggle(container, LocalizationManager.GetString("Visuals_Eye_HUD_JobIcons"), ref CerberusConfig.Hud.ShowJobIcons, "ShowJobIcons");
-        HudIconToggle(container, LocalizationManager.GetString("Visuals_Eye_HUD_MindShieldIcons"), ref CerberusConfig.Hud.ShowMindShieldIcons, "ShowMindShieldIcons");
-        HudIconToggle(container, LocalizationManager.GetString("Visuals_Eye_HUD_CriminalRecordIcons"), ref CerberusConfig.Hud.ShowCriminalRecordIcons, "ShowCriminalRecordIcons");
-        HudIconToggle(container, LocalizationManager.GetString("Visuals_Eye_HUD_SyndicateIcons"), ref CerberusConfig.Hud.ShowSyndicateIcons, "ShowSyndicateIcons");
-        HudIconToggle(container, LocalizationManager.GetString("Visuals_Eye_HUD_ChemicalAnalysis"), ref CerberusConfig.Hud.ChemicalAnalysis, "SolutionScanner");
-        HudIconToggle(container, LocalizationManager.GetString("Visuals_Eye_HUD_ShowElectrocution"), ref CerberusConfig.Hud.ShowElectrocution, "ShowElectrocutionHUD");
+        HudIconToggle(container, LocalizationManager.GetString("Visuals_Eye_HUD_AntagIcons"), () => CerberusConfig.Hud.ShowAntag, v => CerberusConfig.Hud.ShowAntag = v, "ShowAntagIcons");
+        HudIconToggle(container, LocalizationManager.GetString("Visuals_Eye_HUD_JobIcons"), () => CerberusConfig.Hud.ShowJobIcons, v => CerberusConfig.Hud.ShowJobIcons = v, "ShowJobIcons");
+        HudIconToggle(container, LocalizationManager.GetString("Visuals_Eye_HUD_MindShieldIcons"), () => CerberusConfig.Hud.ShowMindShieldIcons, v => CerberusConfig.Hud.ShowMindShieldIcons = v, "ShowMindShieldIcons");
+        HudIconToggle(container, LocalizationManager.GetString("Visuals_Eye_HUD_CriminalRecordIcons"), () => CerberusConfig.Hud.ShowCriminalRecordIcons, v => CerberusConfig.Hud.ShowCriminalRecordIcons = v, "ShowCriminalRecordIcons");
+        HudIconToggle(container, LocalizationManager.GetString("Visuals_Eye_HUD_SyndicateIcons"), () => CerberusConfig.Hud.ShowSyndicateIcons, v => CerberusConfig.Hud.ShowSyndicateIcons = v, "ShowSyndicateIcons");
+        HudIconToggle(container, LocalizationManager.GetString("Visuals_Eye_HUD_ChemicalAnalysis"), () => CerberusConfig.Hud.ChemicalAnalysis, v => CerberusConfig.Hud.ChemicalAnalysis = v, "SolutionScanner");
+        HudIconToggle(container, LocalizationManager.GetString("Visuals_Eye_HUD_ShowElectrocution"), () => CerberusConfig.Hud.ShowElectrocution, v => CerberusConfig.Hud.ShowElectrocution = v, "ShowElectrocutionHUD");
 
         parent.AddChild(container);
     }
@@ -2032,24 +2364,36 @@ public sealed class MainMenuWindow : DefaultWindow
         };
         container.AddChild(title);
 
-        var noClydeToggle = new ToggleControl(LocalizationManager.GetString("Visuals_Eye_Patches_NoClyde"));
-        noClydeToggle.Value = CerberusConfig.Settings.ClydePatch;
-        noClydeToggle.ValueChanged += v => CerberusConfig.Settings.ClydePatch = v;
+        var noClydeToggle = new CheckBox
+        {
+            Text = LocalizationManager.GetString("Visuals_Eye_Patches_NoClyde")
+        };
+        noClydeToggle.Pressed = CerberusConfig.Settings.ClydePatch;
+        noClydeToggle.OnToggled += args => CerberusConfig.Settings.ClydePatch = args.Pressed;
         container.AddChild(noClydeToggle);
 
-        var noSmokeToggle = new ToggleControl(LocalizationManager.GetString("Visuals_Eye_Patches_NoSmoke"));
-        noSmokeToggle.Value = CerberusConfig.Settings.SmokePatch;
-        noSmokeToggle.ValueChanged += v => CerberusConfig.Settings.SmokePatch = v;
+        var noSmokeToggle = new CheckBox
+        {
+            Text = LocalizationManager.GetString("Visuals_Eye_Patches_NoSmoke")
+        };
+        noSmokeToggle.Pressed = CerberusConfig.Settings.SmokePatch;
+        noSmokeToggle.OnToggled += args => CerberusConfig.Settings.SmokePatch = args.Pressed;
         container.AddChild(noSmokeToggle);
 
-        var noBadOverlaysToggle = new ToggleControl(LocalizationManager.GetString("Visuals_Eye_Patches_NoBadOverlays"));
-        noBadOverlaysToggle.Value = CerberusConfig.Settings.OverlaysPatch;
-        noBadOverlaysToggle.ValueChanged += v => CerberusConfig.Settings.OverlaysPatch = v;
+        var noBadOverlaysToggle = new CheckBox
+        {
+            Text = LocalizationManager.GetString("Visuals_Eye_Patches_NoBadOverlays")
+        };
+        noBadOverlaysToggle.Pressed = CerberusConfig.Settings.OverlaysPatch;
+        noBadOverlaysToggle.OnToggled += args => CerberusConfig.Settings.OverlaysPatch = args.Pressed;
         container.AddChild(noBadOverlaysToggle);
 
-        var noCameraRecoilToggle = new ToggleControl(LocalizationManager.GetString("Visuals_Eye_Patches_NoCameraRecoil"));
-        noCameraRecoilToggle.Value = CerberusConfig.Settings.NoCameraKickPatch;
-        noCameraRecoilToggle.ValueChanged += v => CerberusConfig.Settings.NoCameraKickPatch = v;
+        var noCameraRecoilToggle = new CheckBox
+        {
+            Text = LocalizationManager.GetString("Visuals_Eye_Patches_NoCameraRecoil")
+        };
+        noCameraRecoilToggle.Pressed = CerberusConfig.Settings.NoCameraKickPatch;
+        noCameraRecoilToggle.OnToggled += args => CerberusConfig.Settings.NoCameraKickPatch = args.Pressed;
         container.AddChild(noCameraRecoilToggle);
 
         parent.AddChild(container);
@@ -2072,19 +2416,28 @@ public sealed class MainMenuWindow : DefaultWindow
         };
         container.AddChild(title);
 
-        var affectPlayerToggle = new ToggleControl(LocalizationManager.GetString("Visuals_Fun_Filters_Player"));
-        affectPlayerToggle.Value = CerberusConfig.Fun.AffectPlayer;
-        affectPlayerToggle.ValueChanged += v => CerberusConfig.Fun.AffectPlayer = v;
+        var affectPlayerToggle = new CheckBox
+        {
+            Text = LocalizationManager.GetString("Visuals_Fun_Filters_Player")
+        };
+        affectPlayerToggle.Pressed = CerberusConfig.Fun.AffectPlayer;
+        affectPlayerToggle.OnToggled += args => CerberusConfig.Fun.AffectPlayer = args.Pressed;
         container.AddChild(affectPlayerToggle);
 
-        var affectMobsToggle = new ToggleControl(LocalizationManager.GetString("Visuals_Fun_Filters_Mobs"));
-        affectMobsToggle.Value = CerberusConfig.Fun.AffectMobs;
-        affectMobsToggle.ValueChanged += v => CerberusConfig.Fun.AffectMobs = v;
+        var affectMobsToggle = new CheckBox
+        {
+            Text = LocalizationManager.GetString("Visuals_Fun_Filters_Mobs")
+        };
+        affectMobsToggle.Pressed = CerberusConfig.Fun.AffectMobs;
+        affectMobsToggle.OnToggled += args => CerberusConfig.Fun.AffectMobs = args.Pressed;
         container.AddChild(affectMobsToggle);
 
-        var affectOthersToggle = new ToggleControl(LocalizationManager.GetString("Visuals_Fun_Filters_Others"));
-        affectOthersToggle.Value = CerberusConfig.Fun.AffectOthers;
-        affectOthersToggle.ValueChanged += v => CerberusConfig.Fun.AffectOthers = v;
+        var affectOthersToggle = new CheckBox
+        {
+            Text = LocalizationManager.GetString("Visuals_Fun_Filters_Others")
+        };
+        affectOthersToggle.Pressed = CerberusConfig.Fun.AffectOthers;
+        affectOthersToggle.OnToggled += args => CerberusConfig.Fun.AffectOthers = args.Pressed;
         container.AddChild(affectOthersToggle);
 
         parent.AddChild(container);
@@ -2107,9 +2460,12 @@ public sealed class MainMenuWindow : DefaultWindow
         };
         container.AddChild(title);
 
-        var textureEnabledToggle = new ToggleControl(LocalizationManager.GetString("Visuals_Fun_TextureOverlay_Enabled"));
-        textureEnabledToggle.Value = CerberusConfig.Texture.Enabled;
-        textureEnabledToggle.ValueChanged += v => CerberusConfig.Texture.Enabled = v;
+        var textureEnabledToggle = new CheckBox
+        {
+            Text = LocalizationManager.GetString("Visuals_Fun_TextureOverlay_Enabled")
+        };
+        textureEnabledToggle.Pressed = CerberusConfig.Texture.Enabled;
+        textureEnabledToggle.OnToggled += args => CerberusConfig.Texture.Enabled = args.Pressed;
         container.AddChild(textureEnabledToggle);
 
         var openFolderButton = new Button
@@ -2124,13 +2480,27 @@ public sealed class MainMenuWindow : DefaultWindow
         };
         container.AddChild(openFolderButton);
 
-        var sizeSlider = new SliderControl(LocalizationManager.GetString("Visuals_Fun_TextureOverlay_Size"), 0.1f, 5f, CerberusConfig.Texture.Size);
-        sizeSlider.ValueChanged += v => CerberusConfig.Texture.Size = v;
+        var sizeSliderLabel = new Label
+        {
+            Text = LocalizationManager.GetString("Visuals_Fun_TextureOverlay_Size")
+        };
+        container.AddChild(sizeSliderLabel);
+        var sizeSlider = new Slider
+        {
+            MinValue = 0.1f,
+            MaxValue = 5f,
+            Value = CerberusConfig.Texture.Size
+        };
+        sizeSlider.OnValueChanged += _ => CerberusConfig.Texture.Size = sizeSlider.Value;
+
         container.AddChild(sizeSlider);
 
-        var invisibleToggle = new ToggleControl(LocalizationManager.GetString("Visuals_Fun_TextureOverlay_Invisible"));
-        invisibleToggle.Value = CerberusConfig.Texture.MakeEntitiesInvisible;
-        invisibleToggle.ValueChanged += v => CerberusConfig.Texture.MakeEntitiesInvisible = v;
+        var invisibleToggle = new CheckBox
+        {
+            Text = LocalizationManager.GetString("Visuals_Fun_TextureOverlay_Invisible")
+        };
+        invisibleToggle.Pressed = CerberusConfig.Texture.MakeEntitiesInvisible;
+        invisibleToggle.OnToggled += args => CerberusConfig.Texture.MakeEntitiesInvisible = args.Pressed;
         container.AddChild(invisibleToggle);
 
         parent.AddChild(container);
@@ -2153,9 +2523,12 @@ public sealed class MainMenuWindow : DefaultWindow
         };
         container.AddChild(title);
 
-        var translateChatToggle = new ToggleControl(LocalizationManager.GetString("Misc_General_Translator_TranslateChat"));
-        translateChatToggle.Value = CerberusConfig.Settings.TranslateChatPatch;
-        translateChatToggle.ValueChanged += v => CerberusConfig.Settings.TranslateChatPatch = v;
+        var translateChatToggle = new CheckBox
+        {
+            Text = LocalizationManager.GetString("Misc_General_Translator_TranslateChat")
+        };
+        translateChatToggle.Pressed = CerberusConfig.Settings.TranslateChatPatch;
+        translateChatToggle.OnToggled += args => CerberusConfig.Settings.TranslateChatPatch = args.Pressed;
         container.AddChild(translateChatToggle);
 
         var languageInput = new LineEdit
@@ -2166,7 +2539,7 @@ public sealed class MainMenuWindow : DefaultWindow
             Visible = CerberusConfig.Settings.TranslateChatPatch
         };
         languageInput.OnTextChanged += args => CerberusConfig.Settings.TranslateChatLang = args.Text;
-        translateChatToggle.ValueChanged += v => languageInput.Visible = v;
+        translateChatToggle.OnToggled += args => languageInput.Visible = args.Pressed;
         container.AddChild(languageInput);
 
         var infoLabel = new Label
@@ -2198,14 +2571,20 @@ public sealed class MainMenuWindow : DefaultWindow
         };
         container.AddChild(title);
 
-        var enabledToggle = new ToggleControl(LocalizationManager.GetString("Misc_General_SearchingItems_Enabled"));
-        enabledToggle.Value = CerberusConfig.Misc.ItemSearcherEnabled;
-        enabledToggle.ValueChanged += v => CerberusConfig.Misc.ItemSearcherEnabled = v;
+        var enabledToggle = new CheckBox
+        {
+            Text = LocalizationManager.GetString("Misc_General_SearchingItems_Enabled")
+        };
+        enabledToggle.Pressed = CerberusConfig.Misc.ItemSearcherEnabled;
+        enabledToggle.OnToggled += args => CerberusConfig.Misc.ItemSearcherEnabled = args.Pressed;
         container.AddChild(enabledToggle);
 
-        var showNameToggle = new ToggleControl(LocalizationManager.GetString("Misc_General_SearchingItems_ShowName"));
-        showNameToggle.Value = CerberusConfig.Misc.ItemSearcherShowName;
-        showNameToggle.ValueChanged += v => CerberusConfig.Misc.ItemSearcherShowName = v;
+        var showNameToggle = new CheckBox
+        {
+            Text = LocalizationManager.GetString("Misc_General_SearchingItems_ShowName")
+        };
+        showNameToggle.Pressed = CerberusConfig.Misc.ItemSearcherShowName;
+        showNameToggle.OnToggled += args => CerberusConfig.Misc.ItemSearcherShowName = args.Pressed;
         container.AddChild(showNameToggle);
 
         var scrollContainer = new ScrollContainer
@@ -2280,20 +2659,33 @@ public sealed class MainMenuWindow : DefaultWindow
         };
         container.AddChild(title);
 
-        var enabledToggle = new ToggleControl(LocalizationManager.GetString("Misc_Spammer_Chat_Enabled"));
-        enabledToggle.Value = CerberusConfig.Spammer.ChatEnabled;
-        enabledToggle.ValueChanged += v =>
+        var enabledToggle = new CheckBox
         {
-            CerberusConfig.Spammer.ChatEnabled = v;
-            if (v && _spammerSystem != null)
+            Text = LocalizationManager.GetString("Misc_Spammer_Chat_Enabled")
+        };
+        enabledToggle.Pressed = CerberusConfig.Spammer.ChatEnabled;
+        enabledToggle.OnToggled += args =>
+        {
+            CerberusConfig.Spammer.ChatEnabled = args.Pressed;
+            if (args.Pressed && _spammerSystem != null)
             {
                 _spammerSystem.StartSpamChat();
             }
         };
         container.AddChild(enabledToggle);
 
-        var delaySlider = new SliderControl(LocalizationManager.GetString("Misc_Spammer_Chat_Delay"), 10, 1000, CerberusConfig.Spammer.ChatDelay);
-        delaySlider.ValueChanged += v => CerberusConfig.Spammer.ChatDelay = (int)v;
+        var delaySliderLabel = new Label
+        {
+            Text = LocalizationManager.GetString("Misc_Spammer_Chat_Delay")
+        };
+        container.AddChild(delaySliderLabel);
+        var delaySlider = new Slider
+        {
+            MinValue = 10,
+            MaxValue = 1000,
+            Value = CerberusConfig.Spammer.ChatDelay
+        };
+        delaySlider.OnValueChanged += _ => CerberusConfig.Spammer.ChatDelay = (int)delaySlider.Value;
         container.AddChild(delaySlider);
 
         var textInput = new LineEdit
@@ -2325,20 +2717,33 @@ public sealed class MainMenuWindow : DefaultWindow
         };
         container.AddChild(title);
 
-        var enabledToggle = new ToggleControl(LocalizationManager.GetString("Misc_Spammer_AHelp_Enabled"));
-        enabledToggle.Value = CerberusConfig.Spammer.AHelpEnabled;
-        enabledToggle.ValueChanged += v =>
+        var enabledToggle = new CheckBox
         {
-            CerberusConfig.Spammer.AHelpEnabled = v;
-            if (v && _spammerSystem != null)
+            Text = LocalizationManager.GetString("Misc_Spammer_AHelp_Enabled")
+        };
+        enabledToggle.Pressed = CerberusConfig.Spammer.AHelpEnabled;
+        enabledToggle.OnToggled += args =>
+        {
+            CerberusConfig.Spammer.AHelpEnabled = args.Pressed;
+            if (args.Pressed && _spammerSystem != null)
             {
                 _spammerSystem.StartSpamAHelp();
             }
         };
         container.AddChild(enabledToggle);
 
-        var delaySlider = new SliderControl(LocalizationManager.GetString("Misc_Spammer_AHelp_Delay"), 10, 1000, CerberusConfig.Spammer.AHelpDelay);
-        delaySlider.ValueChanged += v => CerberusConfig.Spammer.AHelpDelay = (int)v;
+        var delaySliderLabel = new Label
+        {
+            Text = LocalizationManager.GetString("Misc_Spammer_AHelp_Delay")
+        };
+        container.AddChild(delaySliderLabel);
+        var delaySlider = new Slider
+        {
+            MinValue = 10,
+            MaxValue = 1000,
+            Value = CerberusConfig.Spammer.AHelpDelay
+        };
+        delaySlider.OnValueChanged += _ => CerberusConfig.Spammer.AHelpDelay = (int)delaySlider.Value;
         container.AddChild(delaySlider);
 
         var textInput = new LineEdit
@@ -2370,39 +2775,55 @@ public sealed class MainMenuWindow : DefaultWindow
         };
         container.AddChild(title);
 
-        var adminPrivilegeToggle = new ToggleControl(LocalizationManager.GetString("Settings_Patches_AdminPrivilege"));
-        adminPrivilegeToggle.Value = CerberusConfig.Settings.AdminPatch;
-        adminPrivilegeToggle.ValueChanged += v => CerberusConfig.Settings.AdminPatch = v;
+        var adminPrivilegeToggle = new CheckBox
+        {
+            Text = LocalizationManager.GetString("Settings_Patches_AdminPrivilege")
+        };
+        adminPrivilegeToggle.Pressed = CerberusConfig.Settings.AdminPatch;
+        adminPrivilegeToggle.OnToggled += args => CerberusConfig.Settings.AdminPatch = args.Pressed;
         container.AddChild(adminPrivilegeToggle);
 
-        var noDamageFriendToggle = new ToggleControl(LocalizationManager.GetString("Settings_Patches_NoDamageFriend"));
-        noDamageFriendToggle.Value = CerberusConfig.Settings.NoDmgFriendPatch;
-        noDamageFriendToggle.ValueChanged += v => CerberusConfig.Settings.NoDmgFriendPatch = v;
+        var noDamageFriendToggle = new CheckBox
+        {
+            Text = LocalizationManager.GetString("Settings_Patches_NoDamageFriend")
+        };
+        noDamageFriendToggle.Pressed = CerberusConfig.Settings.NoDmgFriendPatch;
+        noDamageFriendToggle.OnToggled += args => CerberusConfig.Settings.NoDmgFriendPatch = args.Pressed;
         container.AddChild(noDamageFriendToggle);
 
-        var noDamageForceSayToggle = new ToggleControl(LocalizationManager.GetString("Settings_Patches_NoDamageForceSay"));
-        noDamageForceSayToggle.Value = CerberusConfig.Settings.DamageForcePatch;
-        noDamageForceSayToggle.ValueChanged += v => CerberusConfig.Settings.DamageForcePatch = v;
+        var noDamageForceSayToggle = new CheckBox
+        {
+            Text = LocalizationManager.GetString("Settings_Patches_NoDamageForceSay")
+        };
+        noDamageForceSayToggle.Pressed = CerberusConfig.Settings.DamageForcePatch;
+        noDamageForceSayToggle.OnToggled += args => CerberusConfig.Settings.DamageForcePatch = args.Pressed;
         container.AddChild(noDamageForceSayToggle);
 
-        var antiScreenGrubToggle = new ToggleControl(LocalizationManager.GetString("Settings_Patches_AntiScreenGrub"));
-        antiScreenGrubToggle.Value = CerberusConfig.Settings.AntiScreenGrubPatch;
-        antiScreenGrubToggle.ValueChanged += v => CerberusConfig.Settings.AntiScreenGrubPatch = v;
+        var antiScreenGrubToggle = new CheckBox
+        {
+            Text = LocalizationManager.GetString("Settings_Patches_AntiScreenGrub")
+        };
+        antiScreenGrubToggle.Pressed = CerberusConfig.Settings.AntiScreenGrubPatch;
+        antiScreenGrubToggle.OnToggled += args => CerberusConfig.Settings.AntiScreenGrubPatch = args.Pressed;
         container.AddChild(antiScreenGrubToggle);
 
         parent.AddChild(container);
     }
 
-    private void HudIconToggle(Control parent, string labelName, ref bool value, string iconName)
+    private void HudIconToggle(Control parent, string labelName, Func<bool> getValue, Action<bool> setValue, string iconName)
     {
         if (!_componentManager.ComponentExists(iconName))
             return;
 
-        var toggle = new ToggleControl(labelName);
-        toggle.Value = value;
-        Action<bool> handler = v =>
+        var toggle = new CheckBox
         {
-            if (v)
+            Text = labelName
+        };
+        toggle.Pressed = getValue();
+        toggle.OnToggled += args =>
+        {
+            setValue(args.Pressed);
+            if (args.Pressed)
             {
                 _componentManager.AddComponent(iconName, null);
             }
@@ -2411,7 +2832,6 @@ public sealed class MainMenuWindow : DefaultWindow
                 _componentManager.RemoveComponent(iconName, null);
             }
         };
-        toggle.ValueChanged += handler;
         parent.AddChild(toggle);
     }
 
