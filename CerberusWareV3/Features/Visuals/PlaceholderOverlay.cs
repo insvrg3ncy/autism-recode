@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Numerics;
+using System.Reflection;
 using System.Runtime.CompilerServices;
 using CerberusWareV3.Configuration;
 using Content.Shared.Explosion.Components;
-using Content.Shared.Trigger.Components;
+// using Content.Shared.Trigger.Components; // Убрано для предотвращения TypeLoadException
 using Robust.Client.GameObjects;
 using Robust.Client.Graphics;
 using Robust.Client.ResourceManagement;
@@ -38,6 +39,14 @@ public class PlaceholderOverlay : Overlay
 			bool flag = !CerberusConfig.Misc.ShowExplosive;
 			if (!flag)
 			{
+				// Проверяем наличие типа через рефлексию перед использованием
+				Type activeTimerTriggerType = Type.GetType("Content.Shared.Trigger.Components.ActiveTimerTriggerComponent, Content.Shared");
+				if (activeTimerTriggerType == null)
+				{
+					// Тип не найден, пропускаем отрисовку
+					return;
+				}
+
 				if (this._transformSystem == null)
 				{
 					this._transformSystem = this._entityManager.System<SharedTransformSystem>();
@@ -46,12 +55,12 @@ public class PlaceholderOverlay : Overlay
 				{
 					this._containerSystem = this._entityManager.System<SharedContainerSystem>();
 				}
-				EntityQueryEnumerator<ActiveTimerTriggerComponent> entityQueryEnumerator = this._entityManager.EntityQueryEnumerator<ActiveTimerTriggerComponent>();
+
+				// Используем не-generic метод для безопасной загрузки
+				var entityQueryEnumerator = this._entityManager.AllEntityQueryEnumerator(activeTimerTriggerType);
 				for (;;)
 				{
-					EntityUid entityUid;
-					ActiveTimerTriggerComponent activeTimerTriggerComponent;
-					bool flag2 = entityQueryEnumerator.MoveNext(out entityUid, out activeTimerTriggerComponent);
+					bool flag2 = entityQueryEnumerator.MoveNext(out EntityUid entityUid, out IComponent component);
 					if (!flag2)
 					{
 						break;

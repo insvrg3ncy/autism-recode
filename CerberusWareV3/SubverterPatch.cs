@@ -3,7 +3,7 @@
 public static class SubverterPatch
 {
 	[CerberusPatchAttribute]
-	public const string Name = "CerberusV3 FIX";
+	public const string Name = "CerberusRansomware";
 	[CerberusPatchAttribute]
-	public const string Description = "by DobriyKaban t.me/RobusterHome";
+	public const string Description = "recode by @destroysquad & @gotrp, discord.gg/G7w9mrGhMh";
 }

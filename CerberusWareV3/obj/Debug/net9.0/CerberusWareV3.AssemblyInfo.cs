@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("CerberusWareV3")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+da9ba09925489192524e930324adffb2426f4ff1")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+4d6b4b345881ef7fb6892cde229b1ab15e5c0695")]
 [assembly: System.Reflection.AssemblyProductAttribute("CerberusWareV3")]
 [assembly: System.Reflection.AssemblyTitleAttribute("CerberusWareV3")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

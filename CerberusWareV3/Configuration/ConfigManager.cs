@@ -4,6 +4,7 @@ using System.IO;
 using System.Numerics;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using CerberusWareV3.Utilites;
 
 namespace CerberusWareV3.Configuration
 {
@@ -391,7 +392,7 @@ namespace CerberusWareV3.Configuration
 		public static string ConfigName = "";
 		public static int SelectedConfigIndex = -1;
 		public static List<string> ConfigFiles = new List<string>();
-		public static string configDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "CerberusWare", "Config");
+		public static string configDir = PathHelper.GetConfigDirectory();
 		public class Vector4Converter : JsonConverter<Vector4>
 		{
 			public override Vector4 Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
