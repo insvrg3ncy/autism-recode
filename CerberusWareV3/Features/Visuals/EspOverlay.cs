@@ -32,10 +32,12 @@ public sealed class EspOverlay : Overlay
 	}
 	protected override void Draw(in OverlayDrawArgs args)
 	{
-		bool flag = !CerberusConfig.Esp.Enabled;
-		if (!flag)
+		try
 		{
-			this.UpdateValidSessions();
+			bool flag = !CerberusConfig.Esp.Enabled;
+			if (!flag)
+			{
+				this.UpdateValidSessions();
 			Font font = new VectorFont(this._resourceCache.GetResource<FontResource>(CerberusConfig.Esp.MainFontPath, true), CerberusConfig.Esp.MainFontSize);
 			Font font2 = new VectorFont(this._resourceCache.GetResource<FontResource>(CerberusConfig.Esp.OtherFontPath, true), CerberusConfig.Esp.OtherFontSize);
 			if (this._friendSystem == null)
@@ -231,6 +233,19 @@ public sealed class EspOverlay : Overlay
 				}
 				continue;
 			}
+			}
+		}
+		catch (System.TypeLoadException)
+		{
+			// Типы не могут быть загружены, пропускаем отрисовку
+		}
+		catch (System.NullReferenceException)
+		{
+			// Некоторые компоненты могут быть null, пропускаем отрисовку
+		}
+		catch (System.Exception)
+		{
+			// Игнорируем другие ошибки при отрисовке
 		}
 	}
 	private void UpdateValidSessions()

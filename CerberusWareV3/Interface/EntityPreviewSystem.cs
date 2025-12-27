@@ -5,7 +5,6 @@ using System.Numerics;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
-using Hexa.NET.ImGui;
 using Robust.Client.GameObjects;
 using Robust.Client.Graphics;
 using Robust.Client.UserInterface;
@@ -82,26 +81,7 @@ public sealed class EntityPreviewSystem : EntitySystem
 			}
 		}
 	}
-	public ImTextureID GetImGuiTexture(EntityUid entity)
-	{
-		DefaultInterpolatedStringHandler defaultInterpolatedStringHandler = new DefaultInterpolatedStringHandler(7, 1);
-		defaultInterpolatedStringHandler.AppendLiteral("player_");
-		defaultInterpolatedStringHandler.AppendFormatted<EntityUid>(entity);
-		string text = defaultInterpolatedStringHandler.ToStringAndClear();
-		return TextureLoader.GetImage(text);
-	}
-	private ImTextureID ConvertToImGuiTexture(IRenderTexture rt, string key)
-	{
-		rt.CopyPixelsToMemory<Rgba32>(delegate(Image<Rgba32> image)
-		{
-			using (MemoryStream memoryStream = new MemoryStream())
-			{
-				image.SaveAsPng(memoryStream);
-				TextureLoader.AddImage(key, memoryStream.ToArray(), TextureLoader.ImageFilterMode.Nearest);
-			}
-		}, null);
-		return TextureLoader.GetImage(key);
-	}
+	// GetImGuiTexture и ConvertToImGuiTexture больше не используются - все переведено на RobustUI
 	
 	[Robust.Shared.IoC.Dependency] private readonly IClyde _clyde = null;
 	
@@ -142,11 +122,7 @@ public sealed class EntityPreviewSystem : EntitySystem
 					Direction? direction = new Direction?(job.Item3);
 					handle2.DrawEntity(item, vector, one, angle, default(Angle), direction, null, null, null);
 				}, new Color?(Color.Transparent));
-				DefaultInterpolatedStringHandler defaultInterpolatedStringHandler = new DefaultInterpolatedStringHandler(7, 1);
-				defaultInterpolatedStringHandler.AppendLiteral("player_");
-				defaultInterpolatedStringHandler.AppendFormatted<EntityUid>(job.Item2);
-				string text = defaultInterpolatedStringHandler.ToStringAndClear();
-				this._system.ConvertToImGuiTexture(job.Item1, text);
+				// ConvertToImGuiTexture больше не используется - все переведено на RobustUI
 				job.Item1.Dispose();
 				job.Item4.SetResult(true);
 			}

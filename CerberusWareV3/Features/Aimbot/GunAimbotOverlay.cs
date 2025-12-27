@@ -15,6 +15,7 @@ using Robust.Shared.Configuration;
 using Robust.Shared.Enums;
 using Robust.Shared.GameObjects;
 using Robust.Shared.IoC;
+using DependencyAttribute = Robust.Shared.IoC.DependencyAttribute;
 using Robust.Shared.Map;
 using Robust.Shared.Maths;
 using Robust.Shared.Network;
@@ -244,7 +245,7 @@ public sealed class GunAimbotOverlay : Overlay
 		bool flag = this._targetUid == null || !this._entityManager.EntityExists(this._targetUid.Value) || !this._entityManager.EntityExists(this._gunUid);
 		if (!flag)
 		{
-			bool flag2 = !ImGuiWidgets.IsKeyPressed(CerberusConfig.GunAimBot.HotKey, true);
+			bool flag2 = !_inputManager.IsKeyDown(CerberusConfig.GunAimBot.HotKey);
 			if (!flag2)
 			{
 				GunComponent gunComponent;

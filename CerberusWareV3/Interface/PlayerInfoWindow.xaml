@@ -1,0 +1,25 @@
+<DefaultWindow xmlns="https://spacestation14.io"
+               xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+               x:Class="CerberusWareV3.Interface.PlayerInfoWindow"
+               xmlns:gfx="clr-namespace:Robust.Client.Graphics;assembly=Robust.Client"
+               Title="Player Info"
+               MinSize="400 500"
+               SetSize="400 500"
+               Resizable="True">
+
+    <PanelContainer>
+        <PanelContainer.PanelOverride>
+            <gfx:StyleBoxFlat BackgroundColor="#120B1E"/>
+        </PanelContainer.PanelOverride>
+
+        <ScrollContainer HorizontalExpand="True"
+                       VerticalExpand="True"
+                       HScrollEnabled="False">
+            <BoxContainer Name="ContentContainer"
+                         Orientation="Vertical"
+                         HorizontalExpand="True"
+                         Margin="10"/>
+        </ScrollContainer>
+    </PanelContainer>
+</DefaultWindow>
+

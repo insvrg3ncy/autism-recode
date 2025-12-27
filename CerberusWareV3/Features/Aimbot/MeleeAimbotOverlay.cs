@@ -17,6 +17,7 @@ using Robust.Shared.Enums;
 using Robust.Shared.GameObjects;
 using Robust.Shared.Input;
 using Robust.Shared.IoC;
+using DependencyAttribute = Robust.Shared.IoC.DependencyAttribute;
 using Robust.Shared.Map;
 using Robust.Shared.Maths;
 using Robust.Shared.Timing;
@@ -247,7 +248,7 @@ public sealed class MeleeAimbotOverlay : Overlay
 	}
 	private void HandleLightAttack(MeleeWeaponComponent weapon, EntityUid target)
 	{
-		bool flag = !ImGuiWidgets.IsKeyPressed(CerberusConfig.MeleeAimBot.LightHotKey, true);
+		bool flag = !_inputManager.IsKeyDown(CerberusConfig.MeleeAimBot.LightHotKey);
 		if (!flag)
 		{
 			EntityCoordinates entityCoordinates = this._transformSystem.ToCoordinates(target, this._transformSystem.GetMapCoordinates(target, null));
@@ -256,7 +257,7 @@ public sealed class MeleeAimbotOverlay : Overlay
 	}
 	private void HandleHeavyAttack(MeleeWeaponComponent weapon, EntityUid target)
 	{
-		bool flag = !ImGuiWidgets.IsKeyPressed(CerberusConfig.MeleeAimBot.HeavyHotKey, true);
+		bool flag = !_inputManager.IsKeyDown(CerberusConfig.MeleeAimBot.HeavyHotKey);
 		if (!flag)
 		{
 			Vector2 worldPosition = this._transformSystem.GetWorldPosition(this._playerManager.LocalEntity.Value);

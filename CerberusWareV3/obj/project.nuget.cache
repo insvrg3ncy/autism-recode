@@ -1,10 +1,12 @@
 {
   "version": 2,
-  "dgSpecHash": "yHmVDr1WxqA=",
+  "dgSpecHash": "eWF1q0qzEfQ=",
   "success": true,
-  "projectFilePath": "C:\\Users\\DobriyKaban\\RiderProjects\\CerberusWareV3\\CerberusWareV3\\CerberusWareV3.csproj",
+  "projectFilePath": "/home/main/work/ZZZ/autism-recode/CerberusWareV3/CerberusWareV3.csproj",
   "expectedPackageFiles": [
-    "C:\\Users\\DobriyKaban\\.nuget\\packages\\sixlabors.imagesharp\\3.1.12\\sixlabors.imagesharp.3.1.12.nupkg.sha512"
+    "/home/main/.nuget/packages/sixlabors.imagesharp/3.1.12/sixlabors.imagesharp.3.1.12.nupkg.sha512",
+    "/home/main/.nuget/packages/microsoft.netcore.app.ref/9.0.11/microsoft.netcore.app.ref.9.0.11.nupkg.sha512",
+    "/home/main/.nuget/packages/microsoft.aspnetcore.app.ref/9.0.11/microsoft.aspnetcore.app.ref.9.0.11.nupkg.sha512"
   ],
   "logs": []
 }

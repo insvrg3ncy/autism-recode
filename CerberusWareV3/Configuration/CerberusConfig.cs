@@ -4,7 +4,8 @@ using System.Numerics;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using CerberusWareV3.Localization;
-using Hexa.NET.ImGui;
+using Robust.Client.Input;
+using Keyboard = Robust.Client.Input.Keyboard;
 
 namespace CerberusWareV3.Configuration
 {
@@ -14,7 +15,7 @@ namespace CerberusWareV3.Configuration
 		public static class GunAimBot
 		{
 			public static bool Enabled;
-			public static ImGuiKey HotKey = ImGuiKey.MouseRight;
+			public static Keyboard.Key HotKey = Keyboard.Key.MouseRight;
 			public static bool TargetCritical;
 			public static bool MinSpread;
 			public static bool HitScan;
@@ -31,8 +32,8 @@ namespace CerberusWareV3.Configuration
 		public static class MeleeAimBot
 		{
 			public static bool Enabled;
-			public static ImGuiKey LightHotKey = ImGuiKey.MouseX2;
-			public static ImGuiKey HeavyHotKey = ImGuiKey.MouseX1;
+			public static Keyboard.Key LightHotKey = Keyboard.Key.MouseButton5;
+			public static Keyboard.Key HeavyHotKey = Keyboard.Key.MouseButton4;
 			public static bool TargetCritical;
 			public static bool ShowCircle = true;
 			public static bool ShowLine = true;
@@ -97,10 +98,10 @@ namespace CerberusWareV3.Configuration
 			public static bool FullBrightEnabled;
 			public static float Zoom = 1f;
 			public static bool SuperFastZoom;
-			public static ImGuiKey FovHotKey = ImGuiKey.None;
-			public static ImGuiKey FullBrightHotKey = ImGuiKey.None;
-			public static ImGuiKey ZoomUpHotKey = ImGuiKey.UpArrow;
-			public static ImGuiKey ZoomDownHotKey = ImGuiKey.DownArrow;
+			public static Keyboard.Key FovHotKey = Keyboard.Key.Unknown;
+			public static Keyboard.Key FullBrightHotKey = Keyboard.Key.Unknown;
+			public static Keyboard.Key ZoomUpHotKey = Keyboard.Key.Up;
+			public static Keyboard.Key ZoomDownHotKey = Keyboard.Key.Down;
 		}
 		public static class Hud
 		{
@@ -119,7 +120,7 @@ namespace CerberusWareV3.Configuration
 		{
 			public static bool Enabled;
 			public static Vector4 Color = new Vector4(1f, 0f, 0f, 1f);
-			public static ImGuiKey HotKey = ImGuiKey.MouseMiddle;
+			public static Keyboard.Key HotKey = Keyboard.Key.MouseMiddle;
 		}
 		
 		
@@ -190,7 +191,7 @@ namespace CerberusWareV3.Configuration
 		{
 			public static bool UiCustomizable;
 			public static bool ShowMenu = true;
-			public static ImGuiKey ShowMenuHotKey = ImGuiKey.Delete;
+			public static Keyboard.Key ShowMenuHotKey = Keyboard.Key.Delete;
 			public static bool ShowDebugConsole;
 			public static Language CurrentLanguage = Language.En;
 			public static bool ClydePatch = true;

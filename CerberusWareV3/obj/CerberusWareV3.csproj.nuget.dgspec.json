@@ -1,20 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\DobriyKaban\\RiderProjects\\CerberusWareV3\\CerberusWareV3\\CerberusWareV3.csproj": {}
+    "/home/main/work/ZZZ/autism-recode/CerberusWareV3/CerberusWareV3.csproj": {}
   },
   "projects": {
-    "C:\\Users\\DobriyKaban\\RiderProjects\\CerberusWareV3\\CerberusWareV3\\CerberusWareV3.csproj": {
+    "/home/main/work/ZZZ/autism-recode/CerberusWareV3/CerberusWareV3.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\DobriyKaban\\RiderProjects\\CerberusWareV3\\CerberusWareV3\\CerberusWareV3.csproj",
+        "projectUniqueName": "/home/main/work/ZZZ/autism-recode/CerberusWareV3/CerberusWareV3.csproj",
         "projectName": "CerberusWareV3",
-        "projectPath": "C:\\Users\\DobriyKaban\\RiderProjects\\CerberusWareV3\\CerberusWareV3\\CerberusWareV3.csproj",
-        "packagesPath": "C:\\Users\\DobriyKaban\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\DobriyKaban\\RiderProjects\\CerberusWareV3\\CerberusWareV3\\obj\\",
+        "projectPath": "/home/main/work/ZZZ/autism-recode/CerberusWareV3/CerberusWareV3.csproj",
+        "packagesPath": "/home/main/.nuget/packages/",
+        "outputPath": "/home/main/work/ZZZ/autism-recode/CerberusWareV3/obj/",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\DobriyKaban\\AppData\\Roaming\\NuGet\\NuGet.Config"
+          "/home/main/.nuget/NuGet/NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net9.0"
@@ -38,7 +38,7 @@
           "auditLevel": "low",
           "auditMode": "direct"
         },
-        "SdkAnalysisLevel": "9.0.300"
+        "SdkAnalysisLevel": "10.0.100"
       },
       "frameworks": {
         "net9.0": {
@@ -60,12 +60,22 @@
           ],
           "assetTargetFallback": true,
           "warn": true,
+          "downloadDependencies": [
+            {
+              "name": "Microsoft.AspNetCore.App.Ref",
+              "version": "[9.0.11, 9.0.11]"
+            },
+            {
+              "name": "Microsoft.NETCore.App.Ref",
+              "version": "[9.0.11, 9.0.11]"
+            }
+          ],
           "frameworkReferences": {
             "Microsoft.NETCore.App": {
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.308/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "/usr/share/dotnet/sdk/10.0.100/PortableRuntimeIdentifierGraph.json"
         }
       }
     }
