@@ -30,21 +30,13 @@
       <EmbeddedResource Include="Resources\5.png">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </EmbeddedResource>
-      <EmbeddedResource Include="Resources\cimgui.dll">
-        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      </EmbeddedResource>
-      <EmbeddedResource Include="Resources\ImGuiImpl.dll">
-        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      </EmbeddedResource>
       <None Remove="0.png" />
       <None Remove="1.png" />
       <None Remove="2.png" />
       <None Remove="3.png" />
       <None Remove="4.png" />
       <None Remove="5.png" />
-      <None Remove="cimgui.dll" />
       <None Remove="Font.ttf" />
-      <None Remove="ImGuiImpl.dll" />
       <None Remove="Resources\Font\Font.ttf" />
       <EmbeddedResource Include="Resources\Font\Font.ttf">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
@@ -67,17 +59,8 @@
       <Reference Include="DiscordRPC">
         <HintPath>Resources\DiscordRPC.dll</HintPath>
       </Reference>
-      <Reference Include="Hexa.NET.ImGui">
-        <HintPath>Resources\Hexa.NET.ImGui.dll</HintPath>
-      </Reference>
-      <Reference Include="Hexa.NET.ImGui.Backends">
-        <HintPath>Resources\Hexa.NET.ImGui.Backends.dll</HintPath>
-      </Reference>
       <Reference Include="HexaGen.Runtime">
         <HintPath>Resources\HexaGen.Runtime.dll</HintPath>
-      </Reference>
-      <Reference Include="ImGui.NET">
-        <HintPath>Resources\ImGui.NET.dll</HintPath>
       </Reference>
       <Reference Include="MinHook.NET">
         <HintPath>Resources\MinHook.NET.dll</HintPath>

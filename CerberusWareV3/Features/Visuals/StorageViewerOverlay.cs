@@ -57,7 +57,7 @@ public sealed class StorageViewerOverlay : Overlay
 	}
 	private void HandleTargetLocking(in OverlayDrawArgs args)
 	{
-		bool flag = !ImGuiWidgets.IsKeyPressed(CerberusConfig.StorageViewer.HotKey, false);
+		bool flag = !_inputManager.IsKeyDown(CerberusConfig.StorageViewer.HotKey);
 		if (!flag)
 		{
 			EntityUid? entityUnderCursor = this.GetEntityUnderCursor(in args);

@@ -2,7 +2,8 @@
 using System.Collections.Generic;
 using System.Numerics;
 using CerberusWareV3.Localization;
-using Hexa.NET.ImGui;
+using Robust.Client.Input;
+using Keyboard = Robust.Client.Input.Keyboard;
 
 namespace CerberusWareV3.Configuration
 {
@@ -26,7 +27,7 @@ namespace CerberusWareV3.Configuration
 		public class GunAimBotDataClass
 		{
 			public bool Enabled { get; set; }
-			public ImGuiKey HotKey { get; set; }
+			public Keyboard.Key HotKey { get; set; }
 			public bool TargetCritical { get; set; }
 			public bool MinSpread { get; set; }
 			public bool HitScan { get; set; }
@@ -43,8 +44,8 @@ namespace CerberusWareV3.Configuration
 		public class MeleeAimBotDataClass
 		{
 			public bool Enabled { get; set; }
-			public ImGuiKey LightHotKey { get; set; }
-			public ImGuiKey HeavyHotKey { get; set; }
+			public Keyboard.Key LightHotKey { get; set; }
+			public Keyboard.Key HeavyHotKey { get; set; }
 			public bool TargetCritical { get; set; }
 			public bool ShowCircle { get; set; }
 			public bool ShowLine { get; set; }
@@ -107,10 +108,10 @@ namespace CerberusWareV3.Configuration
 			public bool FullBrightEnabled { get; set; }
 			public float Zoom { get; set; }
 			public bool SuperFastZoom { get; set; }
-			public ImGuiKey FovHotKey { get; set; }
-			public ImGuiKey FullBrightHotKey { get; set; }
-			public ImGuiKey ZoomUpHotKey { get; set; }
-			public ImGuiKey ZoomDownHotKey { get; set; }
+			public Keyboard.Key FovHotKey { get; set; }
+			public Keyboard.Key FullBrightHotKey { get; set; }
+			public Keyboard.Key ZoomUpHotKey { get; set; }
+			public Keyboard.Key ZoomDownHotKey { get; set; }
 		}
 		public class HudDataClass
 		{
@@ -129,7 +130,7 @@ namespace CerberusWareV3.Configuration
 		{
 			public bool Enabled { get; set; }
 			public Vector4 Color { get; set; }
-			public ImGuiKey HotKey { get; set; }
+			public Keyboard.Key HotKey { get; set; }
 		}
 		public class SpammerDataClass
 		{
@@ -186,7 +187,7 @@ namespace CerberusWareV3.Configuration
 		{
 			public bool UiCustomizable { get; set; }
 			public bool ShowMenu { get; set; }
-			public ImGuiKey ShowMenuHotKey { get; set; }
+			public Keyboard.Key ShowMenuHotKey { get; set; }
 			public bool ShowDebugConsole { get; set; }
 			public Language CurrentLanguage { get; set; }
 			public bool ClydePatch { get; set; }
